@@ -93,15 +93,15 @@ namespace wlb
 
         // get head
         snprintf(head, 256,
-                 "\n++ %s %s :: %d \n|| %s: %d [%s] : ",
+                 "\n++ %s %s :: %d \n|| %s: [%s] id=",
                  _dataVal,
                  file,
                  lineNo,
                  level,
-                 std::this_thread::get_id(),
                  _func);
 
         m_oStream << head;
+        m_oStream << std::this_thread::get_id() << " :\n  ";
         return std::make_shared<LogHelper>(this);
     }
 

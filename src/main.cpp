@@ -11,7 +11,7 @@ int main()
     
     Acceptor* a = new Acceptor(4000);
     MainReactor m;
-    if (m.Initialize())
+    if ( !m.Initialize())
     {
         LOG(ERROR) << "Initialize error ";
         return -1;
