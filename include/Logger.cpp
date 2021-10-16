@@ -98,7 +98,7 @@ namespace wlb
                  file,
                  lineNo,
                  level,
-                 gettid(),
+                 std::this_thread::get_id(),
                  _func);
 
         m_oStream << head;
