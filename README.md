@@ -5,8 +5,8 @@ C++17
 
 ##采用的库
 1. 网络套节字，采用linuxC++原生api，即巴克利socket。
-2. json库为rapidjson，已集成在./inlcude中，用来读取配置文件或者用作数据传输（可能）。
-3. 日志库使用的是C++原生ifstream，自封。
+2. json库为rapidjson，已集成在./inlcude中，用来读取配置文件或者用作数据传输（可能）。（现utils库）
+3. 日志库使用的是C++原生ifstream，自封。（现utils库）
 4. reactor主线程定时器采用boost库asio中的Timer，计时误差在0.001ms每秒。
    
 ##设计思路
