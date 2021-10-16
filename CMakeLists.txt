@@ -22,7 +22,7 @@ add_executable(reactorServer
         src/DEFINE.h
         include/Logger.cpp include/Logger.h
         include/JsonFileReader.cpp include/JsonFileReader.h
-        )
+        src/Connection.cpp src/Connection.h src/SubReactor.cpp src/SubReactor.h)
 
 
 link_directories($(Boost_library_dir))

@@ -9,16 +9,34 @@ namespace wlb
 
 MainReactor::MainReactor()
 {
-    epollfd = epoll_create(1);
+    epollfd = -1;
     m_bRunning = false;
 }
+bool MainReactor::Initialize()
+{
+    epollfd = epoll_create(1);
+    if (epollfd < 0)
+    {
+        LOG(ERROR) << "epoll_create error ,errno : " << errno;
+        return false;
+    }
+    return true;
+}
 
-void MainReactor::pushAcceptor(MainReactor::accept_type *acceptor)
+MainReactor::~MainReactor()
+{
+    if (epollfd != -1){
+        close(epollfd);
+    }
+}
+
+
+void MainReactor::pushAcceptor(accept_ptr acceptor)
 {
     accepts.push_back(acceptor);
 }
 
-void MainReactor::pushSockToThread(MainReactor::socket_type sock)
+void MainReactor::pushSockToThread(socket_type sock)
 {
 
 }
@@ -95,6 +113,7 @@ void MainReactor::onConnection()
 {
 
 }
+
 
 
 }

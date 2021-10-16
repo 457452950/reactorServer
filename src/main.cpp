@@ -11,8 +11,15 @@ int main()
     
     Acceptor* a = new Acceptor(4000);
     MainReactor m;
+    if (m.Initialize())
+    {
+        LOG(ERROR) << "Initialize error ";
+        return -1;
+    }
     m.pushAcceptor(a);
     m.run();
     
+    m.stop();
+    delete a;
     return 0;
 }

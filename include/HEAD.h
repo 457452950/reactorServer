@@ -8,6 +8,11 @@
 
 #include <string>
 #include <vector>
+#include <set>
+#include <map>
+#include <atomic>
+#include <thread>
+#include <mutex>
 
 #include <sys/types.h>
 #include <sys/socket.h>
