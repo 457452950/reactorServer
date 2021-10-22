@@ -8,7 +8,7 @@
 namespace wlb
 {
 
-unsigned int Connection::m_iBufferSize = DEFAULT_BUFFER_SIZE;
+unsigned int Connection::s_iBufferSize = DEFAULT_BUFFER_SIZE;
 
 Connection::Connection() : m_sSock(-1)
 {
@@ -29,7 +29,7 @@ bool Connection::setSocket(socket_type sock)
 
 bool Connection::createBuffer()
 {
-    m_pBuffer = new(std::nothrow) char(m_iBufferSize);
+    m_pBuffer = new(std::nothrow) char(s_iBufferSize);
     if (m_pBuffer == nullptr)
     {
         return false;

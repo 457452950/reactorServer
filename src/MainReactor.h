@@ -8,6 +8,7 @@
 #include "HEAD.h"
 #include "DEFINE.h"
 #include "BaseAcceptor.h"
+#include "SubReactorMgr.h"
 
 namespace wlb
 {
@@ -15,13 +16,14 @@ namespace wlb
 class MainReactor
 {
 public:
-    using epoll_type = int;
-    using socket_type = int;
-    using socket_ptr  = socket_type*;
+    using epoll_type    = int;
+    using socket_type   = int;
+    using socket_ptr    = socket_type*;
     
-    using accept_type = BaseAcceptor;
-    using accept_ptr = accept_type*;
-    using acceptVec = std::vector<accept_type *>;
+    using accept_type   = BaseAcceptor;
+    using accept_ptr    = accept_type*;
+    using acceptVec     = std::vector<accept_type *>;
+    
 public:
     MainReactor();
     bool Initialize();
@@ -31,17 +33,21 @@ public:
     
     void run();
     void stop();
+    void waitToExit();
     
 
 private:
     void onConnection();
-    void pushSockToThread(socket_type sock);
+    void runLoop();
 
 private:
-    epoll_type epollfd;
-    acceptVec accepts;
+    epoll_type                  epollfd;
+    acceptVec                   accepts;
     
-    bool m_bRunning;
+    std::thread*                m_pMainThread;
+    SubReactorMgr               m_ReactorMgr;
+    
+    bool                        m_bRunning;
 };
 
 }

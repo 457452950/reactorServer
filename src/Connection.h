@@ -9,6 +9,7 @@
 #include "DEFINE.h"
 
 
+
 namespace wlb
 {
 
@@ -33,19 +34,19 @@ public:
         m_pBuffer = buf;
     }
     inline void setBufferSize(unsigned int size){
-        m_iBufferSize = size;
+        s_iBufferSize = size;
     }
     inline const unsigned int getBufferDefaultSize(){
         return DEFAULT_BUFFER_SIZE;
     }
     inline const unsigned int getBufferSize() {
-        return m_iBufferSize;
+        return s_iBufferSize;
     }
     
 private:
     socket_type             m_sSock;
     char*                   m_pBuffer;
-    static unsigned int     m_iBufferSize;
+    static unsigned int     s_iBufferSize;
     
     bool                    m_bRunning;
 };

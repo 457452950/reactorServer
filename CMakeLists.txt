@@ -25,7 +25,7 @@ add_executable(reactorServer
         src/Acceptor.cpp src/Acceptor.h include/BaseAcceptor.h
         src/MainReactor.cpp src/MainReactor.h
         include/DEFINE.h
-        src/Connection.cpp src/Connection.h src/SubReactor.cpp src/SubReactor.h)
+        src/Connection.cpp src/Connection.h src/SubReactor.cpp src/SubReactor.h src/SubReactorMgr.cpp src/SubReactorMgr.h)
 
 link_directories($(Boost_library_dir))
 link_directories( ./utils/lib)

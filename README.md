@@ -7,8 +7,10 @@ C++17
 1. 网络套节字，采用linuxC++原生api，即巴克利socket。
 2. json库为rapidjson，已集成在./inlcude中，用来读取配置文件或者用作数据传输（可能）。（现utils库）
 3. 日志库使用的是C++原生ifstream，自封。（现utils库）
-4. reactor主线程定时器采用boost库asio中的Timer，计时误差在0.001ms每秒。
-   
+4. redis库采用hiredis，v1.0.2。
+5. reactor主线程定时器采用boost库（1.75.0）asio中的Timer，计时误差在0.001ms每秒。
+
+
 ##设计思路
 1. 设计库时尽量少的对外暴露接口。
 2. 本网络服务器默认为长连接。

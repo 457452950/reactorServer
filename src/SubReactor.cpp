@@ -28,6 +28,7 @@ bool SubReactor::Initialize()
         return false;
     }
     
+    m_bRunning = true;
     return true;
 }
 
@@ -44,8 +45,6 @@ bool SubReactor::pushSocket(socket_type sock)
 
 void SubReactor::Run()
 {
-    m_bRunning = true;
-    
     while (m_bRunning)
     {
     
@@ -70,10 +69,16 @@ bool SubReactor::add2Conncts(SubReactor::socket_type sock)
     
     conn->createBuffer();
     conn->setSocket(sock);
+    __LOCK__
     m_sConns.insert(conn);
     
     m_iConnectCount++;
     return true;
+}
+
+void SubReactor::Stop()
+{
+    m_bRunning = false;
 }
 
 

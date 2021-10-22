@@ -29,6 +29,7 @@ public:
     
     bool Initialize();
     void Run();
+    void Stop();
 
     bool pushSocket(socket_type sock);
 
@@ -40,6 +41,7 @@ private:
     epoll_type          epollfd;
     Connects            m_sConns;
     
+    std::mutex          m_mMutex;
     bool                m_bRunning;
     std::atomic_uint    m_iConnectCount;
 };

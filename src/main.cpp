@@ -20,6 +20,7 @@ int main()
     m.run();
     
     m.stop();
+    m.waitToExit();
     delete a;
     return 0;
 }
