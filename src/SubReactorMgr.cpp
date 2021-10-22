@@ -49,6 +49,11 @@ void SubReactorMgr::setWorkThradCount(uint count)
 
 void SubReactorMgr::run()
 {
+    if (m_iWorkThreadCount != m_vWorkThreads.size())
+    {
+        return;
+    }
+    
     for (int nIndex = 0; nIndex < m_iWorkThreadCount; ++nIndex)
     {
         m_vWorkThreads.emplace_back(&SubReactor::Run, m_vWorker[nIndex]);

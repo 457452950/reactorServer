@@ -30,6 +30,7 @@ public:
     ~MainReactor();
     
     void pushAcceptor(accept_ptr acceptor);
+    void setWorkerThreadCount(uint threadCount);
     
     void run();
     void stop();

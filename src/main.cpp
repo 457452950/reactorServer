@@ -10,7 +10,10 @@ int main()
 {
     
     Acceptor* a = new Acceptor(4000);
+    if  (a == nullptr)
+        return -1;
     MainReactor m;
+    m.setWorkerThreadCount(4);
     if ( !m.Initialize())
     {
         LOG(ERROR) << "Initialize error ";

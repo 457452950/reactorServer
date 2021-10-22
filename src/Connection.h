@@ -15,8 +15,8 @@ namespace wlb
 
 class Connection
 {
-    using socket_type = int;
-    using socket_ptr  = socket_type*;
+    using socket_type   = int;
+    using socket_ptr    = socket_type*;
     
 public:
     Connection();

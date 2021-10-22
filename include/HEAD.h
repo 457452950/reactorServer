@@ -24,4 +24,7 @@
 
 #include "utils/include/Logger.h"
 
+
+#define __LOCK__ std::scoped_lock<std::mutex> __lock(std::mutex());
+
 #endif //REACTORSERVER_HEAD_H

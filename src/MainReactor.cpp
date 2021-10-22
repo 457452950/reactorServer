@@ -22,7 +22,6 @@ bool MainReactor::Initialize()
         return false;
     }
     
-    m_ReactorMgr.setWorkThradCount(4);
     
     if ( !m_ReactorMgr.Initialize() )
         return false;
@@ -48,6 +47,10 @@ void MainReactor::pushAcceptor(accept_ptr acceptor)
     accepts.push_back(acceptor);
 }
 
+void MainReactor::setWorkerThreadCount(uint threadCount)
+{
+    m_ReactorMgr.setWorkThradCount(threadCount);
+}
 
 void MainReactor::run()
 {
