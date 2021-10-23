@@ -34,7 +34,16 @@ bool Connection::createBuffer()
     {
         return false;
     }
+    
+    m_iReadOffset = 0;
+    m_iRecvOffset = 0;
+    
     return true;
+}
+
+void Connection::hasReadAndUpdata(uint size)
+{
+    m_iRecvOffset += size;
 }
 
 

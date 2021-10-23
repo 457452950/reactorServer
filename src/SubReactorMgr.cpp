@@ -30,6 +30,7 @@ bool SubReactorMgr::Initialize()
     
     for (int nIndex = 0; nIndex < m_iWorkThreadCount; ++nIndex)
     {
+        LOG(INFO) << "new worker ," << nIndex;
         SubReactor* worker = new SubReactor();
         if (!worker->Initialize())
         {
@@ -49,13 +50,15 @@ void SubReactorMgr::setWorkThradCount(uint count)
 
 void SubReactorMgr::run()
 {
-    if (m_iWorkThreadCount != m_vWorkThreads.size())
+    if (m_iWorkThreadCount != m_vWorker.size())
     {
+        LOG(ERROR) << "bad size " << m_iWorkThreadCount << "/" << m_vWorker.size();
         return;
     }
     
     for (int nIndex = 0; nIndex < m_iWorkThreadCount; ++nIndex)
     {
+        LOG(INFO) << "start thread :" << nIndex;
         m_vWorkThreads.emplace_back(&SubReactor::Run, m_vWorker[nIndex]);
     }
 }
@@ -86,7 +89,14 @@ void SubReactorMgr::release()
 //
 bool SubReactorMgr::insertSocket(SubReactor::socket_type sock)
 {
-    m_vWorker[0]->pushSocket(sock);
+    fcntl(sock, F_SETFL, fcntl(sock, F_GETFL, 0) | O_NONBLOCK);
+    int index = 0;
+    LOG(INFO) << "put into no." << index;
+    if ( !m_vWorker[index]->pushSocket(sock) )
+    {
+        LOG(ERROR) << "put into NO." << index << " false";
+        return false;
+    }
     return true;
 }
 

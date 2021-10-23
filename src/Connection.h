@@ -30,9 +30,18 @@ public:
         return m_sSock;
     }
     
-    inline void setBuffer (char* buf){
-        m_pBuffer = buf;
+    inline char * getBuffer(){
+        return m_pBuffer;
     }
+    inline uint getReadOffset(){
+        return m_iReadOffset;
+    }
+    inline uint getRecvOffset(){
+        return m_iRecvOffset;
+    }
+    
+    void        hasReadAndUpdata(uint size);
+    
     inline void setBufferSize(unsigned int size){
         s_iBufferSize = size;
     }
@@ -47,6 +56,8 @@ private:
     socket_type             m_sSock;
     char*                   m_pBuffer;
     static unsigned int     s_iBufferSize;
+    uint                    m_iReadOffset;
+    uint                    m_iRecvOffset;
     
     bool                    m_bRunning;
 };

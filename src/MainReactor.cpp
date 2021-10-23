@@ -68,9 +68,11 @@ void MainReactor::run()
     if (accepts.empty())
         m_bRunning = false;
     
+    LOG(INFO) << "Main thread start.";
     // start Main Thread
     m_pMainThread = new std::thread(&MainReactor::runLoop, this);
     
+    LOG(INFO) << "Sub thread start.";
     // start subreactor thread
     m_ReactorMgr.run();
 }

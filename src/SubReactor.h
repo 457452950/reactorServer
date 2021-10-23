@@ -22,6 +22,7 @@ public:
     using epoll_type = int;
     
     using Connects = std::set<Connection*>;
+    using ConnectMap = std::map<socket_type, Connection*>;
 
 public:
     SubReactor();
@@ -36,10 +37,12 @@ public:
 private:
     bool add2Conncts(socket_type sock);
     bool add2Epoll(socket_type sock);
+    bool ReadDataFromEvents(epoll_event& event);
+    bool RemoveAndCloseConn(epoll_event& event);
     
 private:
     epoll_type          epollfd;
-    Connects            m_sConns;
+    ConnectMap          m_mapConns;
     
     std::mutex          m_mMutex;
     bool                m_bRunning;

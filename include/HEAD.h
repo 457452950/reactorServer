@@ -7,6 +7,7 @@
 
 
 #include <string>
+#include <cstring>
 #include <vector>
 #include <set>
 #include <map>
@@ -21,10 +22,9 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <cerrno>
+#include <fcntl.h>
 
 #include "utils/include/Logger.h"
 
-
-#define __LOCK__ std::scoped_lock<std::mutex> __lock(std::mutex());
 
 #endif //REACTORSERVER_HEAD_H

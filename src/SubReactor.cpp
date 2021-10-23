@@ -11,6 +11,7 @@ SubReactor::SubReactor()
 {
     epollfd = -1;
     m_bRunning = false;
+    m_mapConns.clear();
 }
 
 SubReactor::~SubReactor()
@@ -35,10 +36,14 @@ bool SubReactor::Initialize()
 bool SubReactor::pushSocket(socket_type sock)
 {
     if ( !add2Conncts(sock) ){
+        LOG(ERROR) << "cant add to conncts ";
         return false;
     }
     if ( !add2Epoll(sock))
+    {
+        LOG(ERROR) << "cant add to epoll ";
         return false;
+    }
     
     return true;
 }
@@ -47,13 +52,39 @@ void SubReactor::Run()
 {
     while (m_bRunning)
     {
+        struct epoll_event events[MAXEVENTS];
+        
+        int infds = epoll_wait(epollfd, events, MAXEVENTS, EPOLL_TIME_OUT);
+        
+        if(infds < 0)   // 返回失败
+        {
+            LOG(ERROR) << "epoll_wait() failed.";
+            break;
+        }
+        
+        if (infds == 0)     // 超时
+        {
+            LOG(INFO) << "epoll_wait() timeout.";
+            continue;
+        }
     
+        for (int nIndex = 0; nIndex < infds; ++nIndex)
+        {
+            bool ok = ReadDataFromEvents(events[nIndex]);
+            if (!ok)
+            {
+                RemoveAndCloseConn(events[nIndex]);
+                continue;
+            }
+        }
     }
+    LOG(INFO) << "out of work ,thread stop ";
 }
 
 bool SubReactor::add2Epoll(socket_type sock)
 {
     struct epoll_event ev;
+    memset(&ev, 0, sizeof(struct epoll_event));
     ev.data.fd = sock;
     ev.events = EPOLLIN;
     
@@ -69,8 +100,8 @@ bool SubReactor::add2Conncts(SubReactor::socket_type sock)
     
     conn->createBuffer();
     conn->setSocket(sock);
-    __LOCK__
-    m_sConns.insert(conn);
+    
+    m_mapConns.insert(std::make_pair(sock, conn));
     
     m_iConnectCount++;
     return true;
@@ -79,6 +110,48 @@ bool SubReactor::add2Conncts(SubReactor::socket_type sock)
 void SubReactor::Stop()
 {
     m_bRunning = false;
+}
+
+bool SubReactor::ReadDataFromEvents(epoll_event& event)
+{
+    if (event.events & EPOLLIN)
+    {
+        auto conn = m_mapConns.find(event.data.fd)->second;
+        
+        auto recvSize = read(conn->getSocket(),
+                             conn->getBuffer()+conn->getRecvOffset(),
+                             conn->getBufferSize() - conn->getRecvOffset());
+    
+        // 发生了错误或socket被对方关闭
+        if (recvSize <= 0)
+        {
+            LOG(INFO) << "client eventfd(" << event.data.fd << ") disconnected";
+            return false;
+        }
+        
+        conn->hasReadAndUpdata(recvSize);
+        LOG(INFO) << "buffer : " << conn->getBuffer();
+    }
+    
+    return true;
+}
+
+bool SubReactor::RemoveAndCloseConn(epoll_event& event)
+{
+    struct epoll_event ev;
+    
+    // 把已断开的客户端从epoll中删除
+    memset(&ev, 0, sizeof(struct epoll_event));
+    ev.data.fd = event.data.fd;
+    ev.events = EPOLLIN;
+    
+    epoll_ctl(epollfd, EPOLL_CTL_DEL, event.data.fd, &ev);
+    close(event.data.fd);
+    
+    //
+    m_mapConns.erase(event.data.fd);
+    
+    return false;
 }
 
 

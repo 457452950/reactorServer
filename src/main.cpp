@@ -22,6 +22,8 @@ int main()
     m.pushAcceptor(a);
     m.run();
     
+    while (1);
+    
     m.stop();
     m.waitToExit();
     delete a;
