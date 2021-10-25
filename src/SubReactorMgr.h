@@ -18,8 +18,7 @@ public:
     SubReactorMgr();
     ~SubReactorMgr();
     
-    void setWorkThradCount(uint count);
-    bool Initialize();
+    bool Initialize(unsigned int workThreadCount);
     
     void run();
     void stop();

@@ -22,9 +22,9 @@ add_subdirectory(utils)
 add_executable(reactorServer
         src/main.cpp
         include/HEAD.h
+        include/DEFINE.h
         src/Acceptor.cpp src/Acceptor.h include/BaseAcceptor.h
         src/MainReactor.cpp src/MainReactor.h
-        include/DEFINE.h
         src/Connection.cpp src/Connection.h 
         src/SubReactor.cpp src/SubReactor.h 
         src/SubReactorMgr.cpp src/SubReactorMgr.h

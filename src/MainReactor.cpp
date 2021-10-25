@@ -13,8 +13,9 @@ MainReactor::MainReactor()
     m_pMainThread = nullptr;
     m_bRunning = false;
 }
-bool MainReactor::Initialize()
+bool MainReactor::Initialize(unsigned int threadCount)
 {
+    m_iWorkThreadCount = threadCount;
     epollfd = epoll_create(1);
     if (epollfd < 0)
     {
@@ -23,7 +24,7 @@ bool MainReactor::Initialize()
     }
     
     
-    if ( !m_ReactorMgr.Initialize() )
+    if ( !m_ReactorMgr.Initialize(threadCount) )
         return false;
     
     return true;
@@ -47,10 +48,6 @@ void MainReactor::pushAcceptor(accept_ptr acceptor)
     accepts.push_back(acceptor);
 }
 
-void MainReactor::setWorkerThreadCount(uint threadCount)
-{
-    m_ReactorMgr.setWorkThradCount(threadCount);
-}
 
 void MainReactor::run()
 {

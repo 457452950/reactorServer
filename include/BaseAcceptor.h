@@ -23,6 +23,8 @@ public:
     
 };
 
+BaseAcceptor* CreateAccepter(int port);
+
 }
 
 #endif //REACTORSERVER_BASEACCEPTOR_H

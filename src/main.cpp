@@ -1,7 +1,7 @@
 #include <iostream>
 #include "HEAD.h"
 #include "DEFINE.h"
-#include "Acceptor.h"
+#include "BaseAcceptor.h"
 #include "MainReactor.h"
 
 using namespace wlb;
@@ -9,12 +9,11 @@ using namespace wlb;
 int main()
 {
     
-    Acceptor* a = new Acceptor(4000);
+    auto* a = CreateAccepter(4001);
     if  (a == nullptr)
         return -1;
     MainReactor m;
-    m.setWorkerThreadCount(4);
-    if ( !m.Initialize())
+    if ( !m.Initialize(4))
     {
         LOG(ERROR) << "Initialize error ";
         return -1;

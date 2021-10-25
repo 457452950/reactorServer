@@ -59,5 +59,10 @@ int Acceptor::bind(int port)
     return ::bind(m_sSock, (struct sockaddr * )&m_endPoint, sizeof(m_endPoint));
 }
 
+BaseAcceptor* CreateAccepter(int port)
+{
+    return new Acceptor(port);
+}
+
 
 }

@@ -26,11 +26,10 @@ public:
     
 public:
     MainReactor();
-    bool Initialize();
+    bool Initialize(unsigned int threadCount);
     ~MainReactor();
     
     void pushAcceptor(accept_ptr acceptor);
-    void setWorkerThreadCount(uint threadCount);
     
     void run();
     void stop();
@@ -47,7 +46,8 @@ private:
     
     std::thread*                m_pMainThread;
     SubReactorMgr               m_ReactorMgr;
-    
+    unsigned int                m_iWorkThreadCount;
+
     bool                        m_bRunning;
 };
 

@@ -20,8 +20,9 @@ SubReactorMgr::~SubReactorMgr()
 
 }
 
-bool SubReactorMgr::Initialize()
+bool SubReactorMgr::Initialize(unsigned int workThreadCount)
 {
+    m_iWorkThreadCount = workThreadCount;
     if (m_iWorkThreadCount == 0)
         m_iWorkThreadCount = 1;
     
@@ -43,10 +44,6 @@ bool SubReactorMgr::Initialize()
     return true;
 }
 
-void SubReactorMgr::setWorkThradCount(uint count)
-{
-    m_iWorkThreadCount = count;
-}
 
 void SubReactorMgr::run()
 {
