@@ -17,7 +17,10 @@ SubReactorMgr::SubReactorMgr()
 
 SubReactorMgr::~SubReactorMgr()
 {
-
+    for (int nIndex = 0; nIndex < m_iWorkThreadCount; ++nIndex)
+    {
+        delete m_vWorker[nIndex];
+    }
 }
 
 bool SubReactorMgr::Initialize(ReactorServer* server, unsigned int workThreadCount)
@@ -82,11 +85,6 @@ void SubReactorMgr::waitToExit()
         if (worker.joinable())
             worker.join();
     }
-}
-
-void SubReactorMgr::release()
-{
-
 }
 
 //

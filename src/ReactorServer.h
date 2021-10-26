@@ -40,7 +40,12 @@ public:
         _server->onDisConnected(conn);
     }
     void onMessage(Connection* conn){
-        _server->onMessage(conn, conn->getBuffer());
+        std::string cMsg;
+        while ( conn->readNextMessage(cMsg) )
+        {
+            _server->onMessage(conn, cMsg);
+            cMsg.clear();
+        }
     }
 
 private:

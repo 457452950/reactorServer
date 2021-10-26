@@ -16,7 +16,7 @@ public:
     virtual void onDisConnected(BaseConnection* connect) {
         LOG(INFO);
     };
-    virtual void onMessage(BaseConnection* connect, char * msg) {
+    virtual void onMessage(BaseConnection* connect, std::string& msg) {
         LOG(INFO) << msg;
     };
 

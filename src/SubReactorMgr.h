@@ -24,7 +24,6 @@ public:
     void run();
     void stop();
     void waitToExit();
-    void release();
     
     bool insertSocket(ClientData* clientData);
 

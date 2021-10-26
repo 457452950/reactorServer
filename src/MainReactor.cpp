@@ -50,6 +50,11 @@ MainReactor::~MainReactor()
         delete m_pMainThread;
         m_pMainThread = nullptr;
     }
+    if (m_pServer != nullptr)
+    {
+        delete m_pServer;
+        m_pServer = nullptr;
+    }
 }
 
 

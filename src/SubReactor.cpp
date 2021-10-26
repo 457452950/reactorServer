@@ -131,10 +131,10 @@ bool SubReactor::ReadDataFromEvents(epoll_event& event)
         
         auto recvSize = read(conn->getSocket(),
                              conn->getBuffer()+conn->getRecvOffset(),
-                             conn->getBufferSize() - conn->getRecvOffset());
+                             conn->getRecvSize());
     
         // 发生了错误或socket被对方关闭
-        if (recvSize <= 0)
+        if (recvSize <= 0 && conn->getRecvSize())
         {
             LOG(INFO) << "client eventfd(" << event.data.fd << ") disconnected";
             m_pServer->onDisConnected(conn);

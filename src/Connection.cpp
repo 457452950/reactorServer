@@ -66,7 +66,11 @@ bool Connection::createBuffer()
 
 void Connection::hasReadAndUpdata(uint size)
 {
-    m_iRecvOffset += size;
+    LOG(INFO) << "recv offset " << m_iRecvOffset << 
+                     " -> " << m_iRecvOffset + size;
+
+    m_iRecvOffset = (m_iRecvOffset + size) % s_iBufferSize;
+
 }
 
 void Connection::send(const char* msg)
