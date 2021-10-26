@@ -13,7 +13,7 @@ MainReactor::MainReactor()
     m_pMainThread = nullptr;
     m_bRunning = false;
 }
-bool MainReactor::Initialize(unsigned int threadCount)
+bool MainReactor::Initialize(BaseServer* server, unsigned int threadCount)
 {
     m_iWorkThreadCount = threadCount;
     epollfd = epoll_create(1);
@@ -23,10 +23,20 @@ bool MainReactor::Initialize(unsigned int threadCount)
         return false;
     }
     
-    
-    if ( !m_ReactorMgr.Initialize(threadCount) )
+    m_pServer = new ReactorServer();
+    if (m_pServer == nullptr)
+    {
+        return false;
+    }
+    if ( !m_pServer->Initialize(server) )
+    {
+        return false;
+    }
+
+    if ( !m_ReactorMgr.Initialize(m_pServer, threadCount) )
         return false;
     
+
     return true;
 }
 
@@ -80,11 +90,6 @@ void MainReactor::stop()
     m_ReactorMgr.stop();
 }
 
-void MainReactor::onConnection()
-{
-
-}
-
 void MainReactor::runLoop()
 {
     while (m_bRunning)
@@ -99,7 +104,7 @@ void MainReactor::runLoop()
         }
         if (infds == 0)     // 超时
         {
-            LOG(ERROR) << "epoll_wait() timeout";
+            LOG(INFO) << "epoll_wait() timeout";
             continue;
         }
         
@@ -119,15 +124,19 @@ void MainReactor::runLoop()
                 LOG(WARNING) << "accept failed ,errno : " << errno << " socketfd = " << events[i].data.fd;
                 continue;
             }
+
+            struct ClientData* clientData = new ClientData;
+            clientData->sock = clientsock;
+            clientData->ipv4.IP = inet_ntoa(client_endPoint.sin_addr);
+            clientData->ipv4.port = ntohs(client_endPoint.sin_port);
             
             LOG(INFO) << "new connection ,IP : "
-                      << inet_ntoa(client_endPoint.sin_addr)
+                      << clientData->ipv4.IP
                       << " ,port : "
-                      << ntohs(client_endPoint.sin_port);
+                      << clientData->ipv4.port;
             
-            m_ReactorMgr.insertSocket(clientsock);
+            m_ReactorMgr.insertSocket(clientData);
             
-            onConnection();
         }
         
         if (accepts.empty())

@@ -8,15 +8,15 @@
 #include "HEAD.h"
 #include "DEFINE.h"
 #include "Connection.h"
+#include "ReactorServer.h"
 
 namespace wlb
 {
 
-
 class SubReactor
 {
 public:
-    using socket_type = int;
+    using socket_type = Connection::socket_type;
     using socket_ptr = socket_type*;
     
     using epoll_type = int;
@@ -28,14 +28,14 @@ public:
     SubReactor();
     ~SubReactor();
     
-    bool Initialize();
+    bool Initialize(ReactorServer*);
     void Run();
     void Stop();
 
-    bool pushSocket(socket_type sock);
+    bool pushSocket(ClientData* clientData);
 
 private:
-    bool add2Conncts(socket_type sock);
+    bool add2Conncts(ClientData* clientData);
     bool add2Epoll(socket_type sock);
     bool ReadDataFromEvents(epoll_event& event);
     bool RemoveAndCloseConn(epoll_event& event);
@@ -47,6 +47,8 @@ private:
     std::mutex          m_mMutex;
     bool                m_bRunning;
     std::atomic_uint    m_iConnectCount;
+
+    ReactorServer*      m_pServer;
 };
 
 

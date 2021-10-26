@@ -20,8 +20,14 @@ SubReactorMgr::~SubReactorMgr()
 
 }
 
-bool SubReactorMgr::Initialize(unsigned int workThreadCount)
+bool SubReactorMgr::Initialize(ReactorServer* server, unsigned int workThreadCount)
 {
+    m_pServer = server;
+    if (m_pServer == nullptr)
+    {
+        return false;
+    }
+    
     m_iWorkThreadCount = workThreadCount;
     if (m_iWorkThreadCount == 0)
         m_iWorkThreadCount = 1;
@@ -33,7 +39,7 @@ bool SubReactorMgr::Initialize(unsigned int workThreadCount)
     {
         LOG(INFO) << "new worker ," << nIndex;
         SubReactor* worker = new SubReactor();
-        if (!worker->Initialize())
+        if (!worker->Initialize(m_pServer))
         {
             return false;
         }
@@ -84,12 +90,12 @@ void SubReactorMgr::release()
 }
 
 //
-bool SubReactorMgr::insertSocket(SubReactor::socket_type sock)
+bool SubReactorMgr::insertSocket(ClientData* clientData)
 {
-    fcntl(sock, F_SETFL, fcntl(sock, F_GETFL, 0) | O_NONBLOCK);
+    fcntl(clientData->sock, F_SETFL, fcntl(clientData->sock, F_GETFL, 0) | O_NONBLOCK);
     int index = 0;
     LOG(INFO) << "put into no." << index;
-    if ( !m_vWorker[index]->pushSocket(sock) )
+    if ( !m_vWorker[index]->pushSocket(clientData) )
     {
         LOG(ERROR) << "put into NO." << index << " false";
         return false;

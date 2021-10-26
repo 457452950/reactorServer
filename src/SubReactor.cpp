@@ -22,8 +22,14 @@ SubReactor::~SubReactor()
     }
 }
 
-bool SubReactor::Initialize()
+bool SubReactor::Initialize(ReactorServer* server)
 {
+    m_pServer = server;
+    if (m_pServer == nullptr)
+    {
+        return false;
+    }
+    
     epollfd = epoll_create(1);
     if (epollfd == -1){
         return false;
@@ -33,13 +39,13 @@ bool SubReactor::Initialize()
     return true;
 }
 
-bool SubReactor::pushSocket(socket_type sock)
+bool SubReactor::pushSocket(ClientData* clientData)
 {
-    if ( !add2Conncts(sock) ){
+    if ( !add2Conncts(clientData) ){
         LOG(ERROR) << "cant add to conncts ";
         return false;
     }
-    if ( !add2Epoll(sock))
+    if ( !add2Epoll(clientData->sock))
     {
         LOG(ERROR) << "cant add to epoll ";
         return false;
@@ -91,19 +97,24 @@ bool SubReactor::add2Epoll(socket_type sock)
     return !epoll_ctl(epollfd, EPOLL_CTL_ADD, sock, &ev);
 }
 
-bool SubReactor::add2Conncts(SubReactor::socket_type sock)
+bool SubReactor::add2Conncts(ClientData* clientData)
 {
     Connection* conn = new Connection();
     if (conn == nullptr){
         return false;
     }
     
-    conn->createBuffer();
-    conn->setSocket(sock);
+    if ( !conn->Initialize(clientData))
+    {
+        return false;
+    }
     
-    m_mapConns.insert(std::make_pair(sock, conn));
+    m_mapConns.insert(std::make_pair(clientData->sock, conn));
     
     m_iConnectCount++;
+
+    m_pServer->onConnected(conn);
+
     return true;
 }
 
@@ -126,11 +137,12 @@ bool SubReactor::ReadDataFromEvents(epoll_event& event)
         if (recvSize <= 0)
         {
             LOG(INFO) << "client eventfd(" << event.data.fd << ") disconnected";
+            m_pServer->onDisConnected(conn);
             return false;
         }
         
         conn->hasReadAndUpdata(recvSize);
-        LOG(INFO) << "buffer : " << conn->getBuffer();
+        m_pServer->onMessage(conn);
     }
     
     return true;

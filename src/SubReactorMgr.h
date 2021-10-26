@@ -8,6 +8,7 @@
 #include "HEAD.h"
 #include "DEFINE.h"
 #include "SubReactor.h"
+#include "ReactorServer.h"
 
 namespace wlb
 {
@@ -18,14 +19,14 @@ public:
     SubReactorMgr();
     ~SubReactorMgr();
     
-    bool Initialize(unsigned int workThreadCount);
+    bool Initialize(ReactorServer* server, unsigned int workThreadCount);
     
     void run();
     void stop();
     void waitToExit();
     void release();
     
-    bool insertSocket(SubReactor::socket_type sock);
+    bool insertSocket(ClientData* clientData);
 
 private:
     std::vector<SubReactor*>    m_vWorker;
@@ -33,7 +34,7 @@ private:
     
     int                         m_iWorkThreadCount;
     bool                        m_bRunning;
-
+    ReactorServer*              m_pServer;
 };
 
 }

@@ -9,6 +9,7 @@
 #include "DEFINE.h"
 #include "BaseAcceptor.h"
 #include "SubReactorMgr.h"
+#include "ReactorServer.h"
 
 namespace wlb
 {
@@ -26,7 +27,7 @@ public:
     
 public:
     MainReactor();
-    bool Initialize(unsigned int threadCount);
+    bool Initialize(BaseServer* server, unsigned int threadCount);
     ~MainReactor();
     
     void pushAcceptor(accept_ptr acceptor);
@@ -37,7 +38,6 @@ public:
     
 
 private:
-    void onConnection();
     void runLoop();
 
 private:
@@ -49,6 +49,7 @@ private:
     unsigned int                m_iWorkThreadCount;
 
     bool                        m_bRunning;
+    ReactorServer*              m_pServer;
 };
 
 }

@@ -7,16 +7,48 @@
 
 #include "HEAD.h"
 #include "DEFINE.h"
-
+#include "BaseConnection.h"
 
 
 namespace wlb
 {
 
-class Connection
+    struct ClientData
+    {
+        using socket_type = int;
+
+        socket_type sock;
+        struct _ipv4
+        {
+            char* IP;
+            uint port;
+        }ipv4;
+        struct _ipv6
+        {
+            char* IP;
+            uint port;
+        }ipv6;
+        
+    };
+
+class Connection : public BaseConnection
 {
-    using socket_type   = int;
+public:
+    using socket_type   = ClientData::socket_type;
     using socket_ptr    = socket_type*;
+
+public:
+    virtual void send(const char* msg) override;
+    virtual void send(const std::string& msg) override;
+    virtual char* getErrorStr() override{
+        return m_strErrorStr;
+    };
+    virtual char* getPeerIp() override{
+        return m_sClientData.ipv4.IP;
+    };
+    virtual int getPeerPort() override{
+        return m_sClientData.ipv4.port;
+    }
     
 public:
     Connection();
@@ -24,6 +56,8 @@ public:
     
     bool setSocket(socket_type sock);
     bool createBuffer();
+
+    bool Initialize(ClientData* clientData);
     
     
     inline socket_type getSocket(){
@@ -58,8 +92,21 @@ private:
     static unsigned int     s_iBufferSize;
     uint                    m_iReadOffset;
     uint                    m_iRecvOffset;
+
+    union _ClientData{
+        struct _ipv4{
+            char* IP;
+            uint  port;
+        }   ipv4;
+        struct _ipv6{
+            char* IP;
+            uint  port;
+        }   ipv6;
+        
+    }                       m_sClientData;
     
     bool                    m_bRunning;
+    char*                   m_strErrorStr;
 };
 
 }
