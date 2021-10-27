@@ -61,15 +61,26 @@ public:
 
     int readNextMessage(std::string& msg){
         uint16_t size;
+        msg.clear();
 
-        if (m_iReadOffset == m_iRecvOffset)
+        if ( m_iReadOffset == m_iRecvOffset || 
+                (m_iRecvOffset - m_iReadOffset <= 4) ||
+                (s_iBufferSize - m_iReadOffset) + (m_iRecvOffset) <= 4 )
         {
-            msg.clear();
+            LOG(INFO) << "no enough message to read";
             return 0;
         }
         
-
-        memcpy(&size, m_pBuffer+m_iReadOffset, 4);
+        if ( m_iReadOffset + 4 <= s_iBufferSize )
+            memcpy(&size, m_pBuffer+m_iReadOffset, 4);
+        else
+        {
+            char* temp = new char[4];
+            int back = s_iBufferSize - m_iReadOffset;
+            memcpy(temp, m_pBuffer+m_iReadOffset, back);
+            memcpy(temp+back, m_pBuffer, 4-back);
+            memcpy(&size, temp, 4);
+        }
         LOG(INFO) << "recv size : " << size
                    << " buf : " << m_pBuffer;
 
@@ -77,13 +88,12 @@ public:
         { 
             LOG(INFO) << "m_iRecvOffset >= m_iReadOffset";
             // havent enough message
-            if (size > m_iRecvOffset - m_iReadOffset)  
+            if (size + 4 > m_iRecvOffset - m_iReadOffset )
             {
                 LOG(INFO) << "no enough message to read"
                     << "size : " << size
                     << " recv offset : " << m_iRecvOffset
                     << " read offset : " << m_iReadOffset;
-                msg.clear();
                 return 0;
             }
             msg.assign(m_pBuffer+m_iReadOffset+4,
@@ -98,20 +108,28 @@ public:
         {
             LOG(INFO) << "m_iRecvOffset < m_iReadOffset";
             // havent enough message
-            // size > (s_iBufferSize - m_iReadOffset + m_iRecvOffset)
-            if (m_iReadOffset - m_iRecvOffset + size 
-                                                >= s_iBufferSize)
+            // size + 4 > (s_iBufferSize - m_iReadOffset + m_iRecvOffset + 1)
+            if (m_iReadOffset - m_iRecvOffset + size + 4
+                                                > s_iBufferSize)
             {
                 LOG(INFO) << "no enough message to read";
-                msg.clear();
                 return 0;
             }
-            msg.append(m_pBuffer + m_iReadOffset + 4, 
-                                        s_iBufferSize - m_iReadOffset - 4);
-            msg.append(m_pBuffer, m_iRecvOffset); 
+            if ( m_iReadOffset + 4 >= s_iBufferSize )
+            {
+                int start = (m_iReadOffset + 4) % s_iBufferSize;
+                msg.append(m_pBuffer + start, size);
+            }
+            else
+            {
+                int back = s_iBufferSize - m_iReadOffset - 4;
+                msg.append(m_pBuffer + m_iReadOffset + 4, back);
+                msg.append(m_pBuffer, size - back);
+                LOG(DEBUG) << "back : " << back << " front " << size - back;
+            }
 
             LOG(INFO) << "msg : " << msg;
-            m_iReadOffset = m_iReadOffset + size + 4  - s_iBufferSize;
+            m_iReadOffset = (m_iReadOffset + size + 4) % s_iBufferSize;
             return size;
         }
         return false;
@@ -131,7 +149,7 @@ public:
     
     void        hasReadAndUpdata(uint size);
     uint        getRecvSize(){      // 最大可接收长度
-        if (m_iRecvOffset > m_iReadOffset)
+        if (m_iRecvOffset >= m_iReadOffset)
         {
             return s_iBufferSize - m_iRecvOffset;
         }
@@ -139,7 +157,7 @@ public:
         {
             return m_iReadOffset - m_iRecvOffset;
         }
-        
+        return 0;
     }
     
     inline void setBufferSize(unsigned int size){

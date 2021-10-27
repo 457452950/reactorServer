@@ -129,9 +129,13 @@ bool SubReactor::ReadDataFromEvents(epoll_event& event)
     {
         auto conn = m_mapConns.find(event.data.fd)->second;
         
-        auto recvSize = read(conn->getSocket(),
+        auto recvSize = recv(conn->getSocket(),
                              conn->getBuffer()+conn->getRecvOffset(),
-                             conn->getRecvSize());
+                             conn->getRecvSize(),
+                             0);
+
+        LOG(INFO) << "max recv : " << conn->getRecvSize()
+                    << " real recv : " << recvSize;
     
         // 发生了错误或socket被对方关闭
         if (recvSize <= 0 && conn->getRecvSize())
