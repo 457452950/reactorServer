@@ -14,6 +14,7 @@ include_directories(
         include
 )
 
+set(CMAKE_CXX_FLAGS -g)
 set(CMAKE_CXX_STANDARD 17)
 
 add_subdirectory(utils)

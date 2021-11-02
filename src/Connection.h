@@ -72,7 +72,10 @@ public:
         }
         
         if ( m_iReadOffset + 4 <= s_iBufferSize )
-            memcpy(&size, m_pBuffer+m_iReadOffset, 4);
+        {
+            LOG(INFO) << "m_iReadOffset" <<  m_iReadOffset <<  "add :" << *(int*)(m_pBuffer + m_iReadOffset);
+            memcpy(&size, m_pBuffer + m_iReadOffset, 4);
+        }
         else
         {
             char* temp = new char[4];
@@ -81,8 +84,7 @@ public:
             memcpy(temp+back, m_pBuffer, 4-back);
             memcpy(&size, temp, 4);
         }
-        LOG(INFO) << "recv size : " << size
-                   << " buf : " << m_pBuffer;
+        LOG(INFO) << "recv size : " << size;
 
         if (m_iRecvOffset > m_iReadOffset)
         { 

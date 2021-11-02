@@ -40,9 +40,9 @@ int main()
     m.pushAcceptor(a);
     m.run();
     
-    while (1);
+    // while (1);
     
-    m.stop();
+    // m.stop();
     m.waitToExit();
     delete a;
     return 0;

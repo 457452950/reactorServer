@@ -11,6 +11,6 @@
 
 #define EPOLL_TIME_OUT -1                 //ms
 
-#define DEFAULT_BUFFER_SIZE  (30)     //  8M
+#define DEFAULT_BUFFER_SIZE  (512 * 1024)     //  8M
 
 #endif //REACTORSERVER_DEFINE_H

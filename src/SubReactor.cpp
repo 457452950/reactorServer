@@ -165,7 +165,9 @@ bool SubReactor::RemoveAndCloseConn(epoll_event& event)
     close(event.data.fd);
     
     //
-    m_mapConns.erase(event.data.fd);
+    auto ite = m_mapConns.find(event.data.fd);
+    delete(ite->second);
+    m_mapConns.erase(ite);
     
     return false;
 }

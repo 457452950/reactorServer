@@ -22,7 +22,9 @@ Connection::Connection() : m_sSock(-1)
 
 Connection::~Connection()
 {
-
+    if (m_pBuffer != nullptr){
+        delete[] m_pBuffer;
+    }
 }
 
 bool Connection::setSocket(socket_type sock)
@@ -52,7 +54,7 @@ bool Connection::Initialize(ClientData* clientData)
 
 bool Connection::createBuffer()
 {
-    m_pBuffer = new(std::nothrow) char(s_iBufferSize);
+    m_pBuffer = new(std::nothrow) char[s_iBufferSize];
     if (m_pBuffer == nullptr)
     {
         return false;
