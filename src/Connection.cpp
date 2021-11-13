@@ -77,12 +77,17 @@ void Connection::hasReadAndUpdata(uint size)
 
 void Connection::send(const char* msg)
 {
-    ::send(this->m_sSock, (void*)msg, strlen(msg), 0);
+    char* sendMsg = new char[strlen(msg) + 4 + 1];
+    uint32_t strLen = strlen(msg);
+    memcpy(sendMsg, (void*)&strLen, 4);
+    strcpy(sendMsg + 4, msg);
+    ssize_t sendLen = ::send(this->m_sSock, (void*)sendMsg, strlen(msg) + 4, 0);
+    LOG(INFO) << "send len : " << sendLen;
 }
 
 void Connection::send(const std::string& msg)
 {
-    ::send(this->m_sSock, (void*)msg.c_str(), msg.size(), 0);
+    this->send(msg.c_str());
 }
 
 

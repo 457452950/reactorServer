@@ -109,8 +109,10 @@ bool SubReactor::add2Conncts(ClientData* clientData)
         return false;
     }
     
-    m_mapConns.insert(std::make_pair(clientData->sock, conn));
-    
+    {
+        std::lock_guard<std::mutex> l(m_mMutex);
+        m_mapConns.insert(std::make_pair(clientData->sock, conn));
+    }
     m_iConnectCount++;
 
     m_pServer->onConnected(conn);
@@ -134,8 +136,8 @@ bool SubReactor::ReadDataFromEvents(epoll_event& event)
                              conn->getRecvSize(),
                              0);
 
-        LOG(INFO) << "max recv : " << conn->getRecvSize()
-                    << " real recv : " << recvSize;
+        // LOG(INFO) << "max recv : " << conn->getRecvSize()
+        //             << " real recv : " << recvSize;
     
         // 发生了错误或socket被对方关闭
         if (recvSize <= 0 && conn->getRecvSize())
@@ -167,6 +169,8 @@ bool SubReactor::RemoveAndCloseConn(epoll_event& event)
     //
     auto ite = m_mapConns.find(event.data.fd);
     delete(ite->second);
+
+    std::lock_guard<std::mutex> l(m_mMutex);
     m_mapConns.erase(ite);
     
     return false;

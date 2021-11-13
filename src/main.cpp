@@ -18,6 +18,7 @@ public:
     };
     virtual void onMessage(BaseConnection* connect, std::string& msg) {
         LOG(INFO) << msg;
+        connect->send(msg);
     };
 
     test() {}
