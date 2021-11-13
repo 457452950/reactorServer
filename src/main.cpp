@@ -27,6 +27,7 @@ public:
 
 int main()
 {
+    Logger::Init(0, "rs");
     
     auto* a = CreateAccepter(4001);
     test * t = new test();

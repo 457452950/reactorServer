@@ -2,7 +2,7 @@
 // Created by wlb on 2021/10/10.
 //
 
-#include "src/Acceptor.h"
+#include "Acceptor.h"
 
 namespace wlb
 {
@@ -46,6 +46,7 @@ void Acceptor::setOpt()
 {
     int opt = 1;
     unsigned int len = sizeof(opt);
+    setsockopt(m_sSock, SOL_SOCKET, SO_REUSEADDR, &opt, len);
     setsockopt(m_sSock, SOL_SOCKET, SO_REUSEADDR, &opt, len);
     setsockopt(m_sSock, SOL_SOCKET, SO_KEEPALIVE, &opt, len);
 }

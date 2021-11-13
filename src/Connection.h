@@ -124,10 +124,11 @@ public:
             }
             else
             {
-                int back = s_iBufferSize - m_iReadOffset - 4;
+                int back = ((s_iBufferSize - m_iReadOffset) >= 4) ? 
+                        4 : (s_iBufferSize - m_iReadOffset);
+                LOG(DEBUG) << "back : " << back << " front : " << size - back;
                 msg.append(m_pBuffer + m_iReadOffset + 4, back);
                 msg.append(m_pBuffer, size - back);
-                LOG(DEBUG) << "back : " << back << " front " << size - back;
             }
 
             LOG(INFO) << "msg : " << msg;
