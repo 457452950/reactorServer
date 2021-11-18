@@ -57,38 +57,42 @@ public:
     bool setSocket(socket_type sock);
     bool createBuffer();
 
-    bool Initialize(ClientData* clientData);
+    bool Initialize(ClientData* clientData, uint maxBufferSize = 512*1024U);
 
     int readNextMessage(std::string& msg){
         uint16_t size;
         msg.clear();
 
-        if ( m_iReadOffset == m_iRecvOffset || 
-                (m_iRecvOffset - m_iReadOffset <= 4) ||
-                (s_iBufferSize - m_iReadOffset) + (m_iRecvOffset) <= 4 )
+        if ( !m_bIsFull && ((m_iRecvOffset - m_iReadOffset < 4) ||
+                (m_iBufferSize - m_iReadOffset) + (m_iRecvOffset) <= 4) )
         {
             LOG(INFO) << "no enough message to read";
             return 0;
         }
         
-        if ( m_iReadOffset + 4 <= s_iBufferSize )
+        if ( m_iReadOffset + 4 <= m_iBufferSize )
         {
-            LOG(INFO) << "m_iReadOffset" <<  m_iReadOffset <<  "add :" << *(int*)(m_pBuffer + m_iReadOffset);
+            LOG(INFO) << "m_iReadOffset " <<  m_iReadOffset;
             memcpy(&size, m_pBuffer + m_iReadOffset, 4);
         }
         else
         {
             char* temp = new char[4];
-            int back = s_iBufferSize - m_iReadOffset;
+            int back = m_iBufferSize - m_iReadOffset;
             memcpy(temp, m_pBuffer+m_iReadOffset, back);
             memcpy(temp+back, m_pBuffer, 4-back);
             memcpy(&size, temp, 4);
         }
         LOG(INFO) << "recv size : " << size;
+        if (size <= 0)
+        {
+            LOG(WARNING) << "recv size <= 0!!!";
+            m_iReadOffset += 4;
+            return 1;
+        }
 
         if (m_iRecvOffset > m_iReadOffset)
         { 
-            LOG(INFO) << "m_iRecvOffset >= m_iReadOffset";
             // havent enough message
             if (size + 4 > m_iRecvOffset - m_iReadOffset )
             {
@@ -106,36 +110,34 @@ public:
                     << " read offset : " << m_iReadOffset;
             return size;
         }
-        else if (m_iRecvOffset < m_iReadOffset)
+        else if (m_iRecvOffset <= m_iReadOffset)
         {
-            LOG(INFO) << "m_iRecvOffset < m_iReadOffset";
             // havent enough message
-            // size + 4 > (s_iBufferSize - m_iReadOffset + m_iRecvOffset + 1)
-            if (m_iReadOffset - m_iRecvOffset + size + 4
-                                                > s_iBufferSize)
+            // size + 4 > (m_iBufferSize - m_iReadOffset + m_iRecvOffset + 1)
+            if (m_iReadOffset - m_iRecvOffset + size + 4 > m_iBufferSize)
             {
                 LOG(INFO) << "no enough message to read";
                 return 0;
             }
-            if ( m_iReadOffset + 4 >= s_iBufferSize )
+            if ( m_iReadOffset + 4 >= m_iBufferSize )
             {
-                int start = (m_iReadOffset + 4) % s_iBufferSize;
+                int start = (m_iReadOffset + 4) % m_iBufferSize;
                 msg.append(m_pBuffer + start, size);
             }
             else
             {
-                int back = ((s_iBufferSize - m_iReadOffset) >= 4) ? 
-                        4 : (s_iBufferSize - m_iReadOffset);
+                int back = (m_iBufferSize - m_iReadOffset - 4 + 1 > size) ? 
+                            size : m_iBufferSize - m_iReadOffset - 4 + 1;
                 LOG(DEBUG) << "back : " << back << " front : " << size - back;
                 msg.append(m_pBuffer + m_iReadOffset + 4, back);
                 msg.append(m_pBuffer, size - back);
             }
 
             LOG(INFO) << "msg : " << msg;
-            m_iReadOffset = (m_iReadOffset + size + 4) % s_iBufferSize;
+            m_iReadOffset = (m_iReadOffset + size + 4) % m_iBufferSize;
             return size;
         }
-        return false;
+        return 0;
     }
     
     
@@ -150,33 +152,35 @@ public:
         return m_iRecvOffset;
     }
     
+    // 接受数据，刷新写指针
     void        hasReadAndUpdata(uint size);
-    uint        getRecvSize(){      // 最大可接收长度
+
+    uint        getRecvSize(){                  // 最大可接收长度
+        if (m_bIsFull == true)             // 存储已满
+        {
+            return 0;
+        }
         if (m_iRecvOffset >= m_iReadOffset)
         {
-            return s_iBufferSize - m_iRecvOffset;
+            return m_iBufferSize - m_iRecvOffset;
         }
         else if (m_iRecvOffset < m_iReadOffset)
         {
             return m_iReadOffset - m_iRecvOffset;
-        }
-        return 0;
+        }       
     }
     
     inline void setBufferSize(unsigned int size){
-        s_iBufferSize = size;
-    }
-    inline const unsigned int getBufferDefaultSize(){
-        return DEFAULT_BUFFER_SIZE;
+        m_iBufferSize = size;
     }
     inline const unsigned int getBufferSize() {
-        return s_iBufferSize;
+        return m_iBufferSize;
     }
     
 private:
     socket_type             m_sSock;
     char*                   m_pBuffer;
-    static unsigned int     s_iBufferSize;
+    unsigned int            m_iBufferSize;
     uint                    m_iReadOffset;
     uint                    m_iRecvOffset;
 
@@ -193,6 +197,7 @@ private:
     }                       m_sClientData;
     
     bool                    m_bRunning;
+    bool                    m_bIsFull;
     char*                   m_strErrorStr;
 };
 

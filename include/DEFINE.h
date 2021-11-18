@@ -9,8 +9,7 @@
 
 #define MAXEVENTS 1024
 
-#define EPOLL_TIME_OUT 16000                 //ms
+#define EPOLL_TIME_OUT -1                 //ms
 
-#define DEFAULT_BUFFER_SIZE  (512 * 1024)     //  5M
 
 #endif //REACTORSERVER_DEFINE_H

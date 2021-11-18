@@ -56,10 +56,10 @@ bool SubReactor::pushSocket(ClientData* clientData)
 
 void SubReactor::Run()
 {
+    struct epoll_event events[MAXEVENTS];
+    
     while (m_bRunning)
     {
-        struct epoll_event events[MAXEVENTS];
-        
         int infds = epoll_wait(epollfd, events, MAXEVENTS, EPOLL_TIME_OUT);
         
         if(infds < 0)   // 返回失败
@@ -104,7 +104,7 @@ bool SubReactor::add2Conncts(ClientData* clientData)
         return false;
     }
     
-    if ( !conn->Initialize(clientData))
+    if ( !conn->Initialize(clientData, this->m_pServer->getMaxBufferSize()))
     {
         return false;
     }
@@ -129,15 +129,22 @@ bool SubReactor::ReadDataFromEvents(epoll_event& event)
 {
     if (event.events & EPOLLIN)
     {
-        auto conn = m_mapConns.find(event.data.fd)->second;
+        auto iter = m_mapConns.find(event.data.fd);
+        if ( iter == m_mapConns.end())
+        {
+            return false;
+        }
+        
+        auto conn = iter->second;
         
         auto recvSize = recv(conn->getSocket(),
                              conn->getBuffer()+conn->getRecvOffset(),
                              conn->getRecvSize(),
                              0);
 
-        // LOG(INFO) << "max recv : " << conn->getRecvSize()
-        //             << " real recv : " << recvSize;
+        LOG(INFO) << "max recv : " << conn->getRecvSize()
+                    << " real recv : " << recvSize
+                    << " recv offset : " << conn->getRecvOffset();
     
         // 发生了错误或socket被对方关闭
         if (recvSize <= 0 && conn->getRecvSize())
@@ -147,8 +154,9 @@ bool SubReactor::ReadDataFromEvents(epoll_event& event)
             return false;
         }
         
-        conn->hasReadAndUpdata(recvSize);
-        m_pServer->onMessage(conn);
+        conn->hasReadAndUpdata(recvSize);   // 更新 recv offset
+        
+        return m_pServer->onMessage(conn);
     }
     
     return true;
@@ -156,6 +164,8 @@ bool SubReactor::ReadDataFromEvents(epoll_event& event)
 
 bool SubReactor::RemoveAndCloseConn(epoll_event& event)
 {
+    LOG(INFO) << "close connect";
+
     struct epoll_event ev;
     
     // 把已断开的客户端从epoll中删除
@@ -166,14 +176,19 @@ bool SubReactor::RemoveAndCloseConn(epoll_event& event)
     epoll_ctl(epollfd, EPOLL_CTL_DEL, event.data.fd, &ev);
     close(event.data.fd);
     
-    //
+    // 从容器中删除
     auto ite = m_mapConns.find(event.data.fd);
+    if (ite == m_mapConns.end())
+    {
+        return true;
+    }
+    
     delete(ite->second);
 
     std::lock_guard<std::mutex> l(m_mMutex);
     m_mapConns.erase(ite);
     
-    return false;
+    return true;
 }
 
 

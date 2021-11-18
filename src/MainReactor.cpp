@@ -97,10 +97,10 @@ void MainReactor::stop()
 
 void MainReactor::runLoop()
 {
+    struct epoll_event events[MAXEVENTS];
+
     while (m_bRunning)
     {
-        struct epoll_event events[MAXEVENTS];
-        
         int infds = epoll_wait(epollfd, events, MAXEVENTS, EPOLL_TIME_OUT);
         if(infds < 0)
         {
@@ -112,8 +112,6 @@ void MainReactor::runLoop()
             LOG(INFO) << "epoll_wait() timeout";
             continue;
         }
-        
-        LOG(INFO) << "has event ,return size : " <<infds;
         
         for (int i = 0; i < infds; ++i)
         {

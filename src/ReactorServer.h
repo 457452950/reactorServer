@@ -39,13 +39,25 @@ public:
     void onDisConnected(Connection* conn){
         _server->onDisConnected(conn);
     }
-    void onMessage(Connection* conn){
+
+    // 读取成功返回成功 失败则断开连接
+    bool onMessage(Connection* conn){
         std::string cMsg;
         while ( conn->readNextMessage(cMsg) )
         {
+            if (cMsg.empty())
+            {
+                return false;
+            }
+            
             _server->onMessage(conn, cMsg);
             cMsg.clear();
         }
+        return true;
+    }
+
+    inline uint getMaxBufferSize() {
+        return _server->SetMaxBufferSize();
     }
 
 private:
