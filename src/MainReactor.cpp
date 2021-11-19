@@ -10,12 +10,19 @@ namespace wlb
 MainReactor::MainReactor()
 {
     epollfd = -1;
+    m_iEpollTimeout = 0;
+    accepts.clear();
+
     m_pMainThread = nullptr;
+    m_iWorkThreadCount = 0;
+
     m_bRunning = false;
+    m_pServer = nullptr;
 }
 bool MainReactor::Initialize(BaseServer* server, unsigned int threadCount)
 {
     m_iWorkThreadCount = threadCount;
+
     epollfd = epoll_create(1);
     if (epollfd < 0)
     {
@@ -36,6 +43,7 @@ bool MainReactor::Initialize(BaseServer* server, unsigned int threadCount)
     if ( !m_ReactorMgr.Initialize(m_pServer, threadCount) )
         return false;
     
+    m_iEpollTimeout = m_pServer->getListenEpollTimeOut();
 
     return true;
 }
@@ -101,7 +109,7 @@ void MainReactor::runLoop()
 
     while (m_bRunning)
     {
-        int infds = epoll_wait(epollfd, events, MAXEVENTS, EPOLL_TIME_OUT);
+        int infds = epoll_wait(epollfd, events, MAXEVENTS, m_iEpollTimeout);
         if(infds < 0)
         {
             LOG(ERROR) << "epoll_wait failed ";

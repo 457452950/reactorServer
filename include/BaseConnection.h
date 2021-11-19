@@ -16,7 +16,6 @@ public:
     virtual char* getPeerIp()                   = 0;
     virtual int  getPeerPort()                  = 0;
 
-
     virtual ~BaseConnection() {}
 };
 

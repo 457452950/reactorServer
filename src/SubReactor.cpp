@@ -10,8 +10,13 @@ namespace wlb
 SubReactor::SubReactor()
 {
     epollfd = -1;
-    m_bRunning = false;
+    m_iEpollTimeOut = 0;
     m_mapConns.clear();
+
+    m_bRunning = false;
+    m_iConnectCount.store(0);
+
+    m_pServer = nullptr;
 }
 
 SubReactor::~SubReactor()
@@ -36,6 +41,8 @@ bool SubReactor::Initialize(ReactorServer* server)
     }
     
     m_bRunning = true;
+    m_iEpollTimeOut = m_pServer->getWorkEpollTimeOut();
+
     return true;
 }
 
@@ -60,17 +67,17 @@ void SubReactor::Run()
     
     while (m_bRunning)
     {
-        int infds = epoll_wait(epollfd, events, MAXEVENTS, EPOLL_TIME_OUT);
+        int infds = epoll_wait(epollfd, events, MAXEVENTS, m_iEpollTimeOut);
         
         if(infds < 0)   // 返回失败
         {
-            LOG(ERROR) << "epoll_wait() failed.";
+            LOG(ERROR) << "epoll_wait() failed. errno :" << errno;
             break;
         }
         
         if (infds == 0)     // 超时
         {
-            LOG(INFO) << "epoll_wait() timeout.";
+            // LOG(INFO) << "epoll_wait() timeout.";
             continue;
         }
     
@@ -142,9 +149,9 @@ bool SubReactor::ReadDataFromEvents(epoll_event& event)
                              conn->getRecvSize(),
                              0);
 
-        LOG(INFO) << "max recv : " << conn->getRecvSize()
-                    << " real recv : " << recvSize
-                    << " recv offset : " << conn->getRecvOffset();
+        // LOG(INFO) << "max recv : " << conn->getRecvSize()
+        //             << " real recv : " << recvSize
+        //             << " recv offset : " << conn->getRecvOffset();
     
         // 发生了错误或socket被对方关闭
         if (recvSize <= 0 && conn->getRecvSize())

@@ -72,7 +72,7 @@ public:
         
         if ( m_iReadOffset + 4 <= m_iBufferSize )
         {
-            LOG(INFO) << "m_iReadOffset " <<  m_iReadOffset;
+            // LOG(INFO) << "m_iReadOffset " <<  m_iReadOffset;
             memcpy(&size, m_pBuffer + m_iReadOffset, 4);
         }
         else
@@ -96,18 +96,18 @@ public:
             // havent enough message
             if (size + 4 > m_iRecvOffset - m_iReadOffset )
             {
-                LOG(INFO) << "no enough message to read"
-                    << "size : " << size
-                    << " recv offset : " << m_iRecvOffset
-                    << " read offset : " << m_iReadOffset;
+                // LOG(INFO) << "no enough message to read"
+                //     << "size : " << size
+                //     << " recv offset : " << m_iRecvOffset
+                //     << " read offset : " << m_iReadOffset;
                 return 0;
             }
             msg.assign(m_pBuffer+m_iReadOffset+4,
                         size);
             m_iReadOffset += size + 4;
-            LOG(INFO) << "msg : " << msg
-                    << " recv offset : " << m_iRecvOffset
-                    << " read offset : " << m_iReadOffset;
+            // LOG(INFO) << "msg : " << msg
+            //         << " recv offset : " << m_iRecvOffset
+            //         << " read offset : " << m_iReadOffset;
             return size;
         }
         else if (m_iRecvOffset <= m_iReadOffset)

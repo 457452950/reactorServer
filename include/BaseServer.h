@@ -17,6 +17,12 @@ public:
     inline virtual uint SetMaxBufferSize() {
         return 512 * 1024U;
     }
+    inline virtual int SetListenEpollTimeOut() {    // ms
+        return -1;
+    }
+    inline virtual int SetWorkEpollTimeOut() {      // ms
+        return -1;
+    }
 
     virtual ~BaseServer() {};
 };

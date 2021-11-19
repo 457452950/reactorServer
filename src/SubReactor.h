@@ -42,6 +42,7 @@ private:
     
 private:
     epoll_type          epollfd;
+    int                 m_iEpollTimeOut;
     ConnectMap          m_mapConns;
     
     std::mutex          m_mMutex;

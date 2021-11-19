@@ -42,6 +42,7 @@ private:
 
 private:
     epoll_type                  epollfd;
+    int                         m_iEpollTimeout;
     acceptVec                   accepts;
     
     std::thread*                m_pMainThread;

@@ -1,11 +1,14 @@
 #include <iostream>
+#include <atomic>
 #include "HEAD.h"
 #include "DEFINE.h"
 #include "BaseAcceptor.h"
 #include "BaseServer.h"
-#include "MainReactor.h"
+#include "src/MainReactor.h"
 
 using namespace wlb;
+
+std::atomic_int64_t _count{0};
 
 class test : public BaseServer
 {
@@ -17,7 +20,13 @@ public:
         LOG(INFO);
     };
     virtual void onMessage(BaseConnection* connect, std::string& msg) {
-        LOG(INFO) << msg;
+        // LOG(INFO) << msg;
+        _count++;
+        if ( !(_count % 100000U) )
+        {
+            std::cout << "_count:" << _count.load() << "\n";
+        }
+        
         connect->send(msg);
     };
 

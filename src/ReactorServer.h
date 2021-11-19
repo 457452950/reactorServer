@@ -47,7 +47,7 @@ public:
         {
             if (cMsg.empty())
             {
-                return false;
+                return false;       // need to close
             }
             
             _server->onMessage(conn, cMsg);
@@ -57,7 +57,20 @@ public:
     }
 
     inline uint getMaxBufferSize() {
-        return _server->SetMaxBufferSize();
+        int _size = (_server->SetMaxBufferSize() > 5120) 
+                ? _server->SetMaxBufferSize() : 5120;
+        
+        return _size;
+    }
+    inline int getListenEpollTimeOut() {
+        int _time = (_server->SetListenEpollTimeOut() < -1) 
+                ? -1 : _server->SetListenEpollTimeOut();
+        return _time;
+    }
+    inline int getWorkEpollTimeOut() {
+        int _time = (_server->SetWorkEpollTimeOut() < -1) 
+                ? -1 : _server->SetWorkEpollTimeOut();
+        return _time;
     }
 
 private:

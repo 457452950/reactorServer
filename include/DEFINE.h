@@ -9,7 +9,4 @@
 
 #define MAXEVENTS 1024
 
-#define EPOLL_TIME_OUT -1                 //ms
-
-
 #endif //REACTORSERVER_DEFINE_H

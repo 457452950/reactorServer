@@ -97,6 +97,8 @@ void Connection::send(const char* msg)
     memcpy(sendMsg, (void*)&strLen, 4);
     strcpy(sendMsg + 4, msg);
     ssize_t sendLen = ::send(this->m_sSock, (void*)sendMsg, strlen(msg) + 4, 0);
+
+    LOG(INFO) << "send size : " << sendLen << " str : " << msg;
 }
 
 void Connection::send(const std::string& msg)
