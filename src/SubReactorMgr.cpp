@@ -9,70 +9,66 @@ namespace wlb
 
 SubReactorMgr::SubReactorMgr()
 {
-    m_iWorkThreadCount = 0;
-    m_bRunning = false;
-    m_vWorkThreads.clear();
-    m_vWorker.clear();
+    this->m_iWorkThreadCount = 0;
+    this->m_bRunning = false;
+    this->m_vWorkThreads.clear();
+    this->m_vWorker.clear();
 }
 
 SubReactorMgr::~SubReactorMgr()
 {
     for (int nIndex = 0; nIndex < m_iWorkThreadCount; ++nIndex)
     {
-        delete m_vWorker[nIndex];
+        delete this->m_vWorker[nIndex];
+        this->m_vWorker[nIndex] = nullptr;
     }
 }
 
 bool SubReactorMgr::Initialize(ReactorServer* server, unsigned int workThreadCount)
 {
-    m_pServer = server;
-    if (m_pServer == nullptr)
+    this->m_pServer = server;
+    if (this->m_pServer == nullptr)
     {
         return false;
     }
     
-    m_iWorkThreadCount = workThreadCount;
-    if (m_iWorkThreadCount == 0)
-        m_iWorkThreadCount = 1;
+    this->m_iWorkThreadCount = workThreadCount ? workThreadCount : 1;
     
-    if (m_iWorkThreadCount <= 0)
-        return false;
-    
-    for (int nIndex = 0; nIndex < m_iWorkThreadCount; ++nIndex)
+    for (int nIndex = 0; nIndex < this->m_iWorkThreadCount; ++nIndex)
     {
         LOG(INFO) << "new worker ," << nIndex;
-        SubReactor* worker = new SubReactor();
-        if (!worker->Initialize(m_pServer))
+        SubReactor* worker = new(std::nothrow) SubReactor();
+        if ( worker == nullptr || !worker->Initialize(m_pServer))
         {
             return false;
         }
-        m_vWorker.push_back(worker);
+        this->m_vWorker.push_back(worker);
     }
     
-    m_bRunning = true;
+    this->m_bRunning = true;
     return true;
 }
 
 
 void SubReactorMgr::run()
 {
-    if (m_iWorkThreadCount != m_vWorker.size())
+    if (this->m_iWorkThreadCount != this->m_vWorker.size())
     {
         LOG(ERROR) << "bad size " << m_iWorkThreadCount << "/" << m_vWorker.size();
         return;
     }
     
-    for (int nIndex = 0; nIndex < m_iWorkThreadCount; ++nIndex)
+    for (int nIndex = 0; nIndex < this->m_iWorkThreadCount; ++nIndex)
     {
         LOG(INFO) << "start thread :" << nIndex;
-        m_vWorkThreads.emplace_back(&SubReactor::Run, m_vWorker[nIndex]);
+        this->m_vWorkThreads.emplace_back(&SubReactor::Run, m_vWorker[nIndex]);
     }
 }
 
 void SubReactorMgr::stop()
 {
-    m_bRunning = false;
-    for (auto worker : m_vWorker)
+    this->m_bRunning = false;
+    for (auto worker : this->m_vWorker)
     {
         worker->Stop();
     }
@@ -80,17 +76,17 @@ void SubReactorMgr::stop()
 
 void SubReactorMgr::waitToExit()
 {
-    for ( auto& worker : m_vWorkThreads)
+    for ( auto& worker : this->m_vWorkThreads)
     {
         if (worker.joinable())
             worker.join();
     }
 }
 
-//
+// 需要做负载均衡
 bool SubReactorMgr::insertSocket(ClientData* clientData)
 {
-    fcntl(clientData->sock, F_SETFL, fcntl(clientData->sock, F_GETFL, 0) | O_NONBLOCK);
+    ::fcntl(clientData->sock, F_SETFL, ::fcntl(clientData->sock, F_GETFL, 0) | O_NONBLOCK);
     int index = 0;
     LOG(INFO) << "put into no." << index;
     if ( !m_vWorker[index]->pushSocket(clientData) )

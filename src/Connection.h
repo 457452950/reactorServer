@@ -13,23 +13,22 @@
 namespace wlb
 {
 
-    struct ClientData
+struct ClientData
+{
+    using socket_type = int;
+    socket_type sock;
+    struct _ipv4
     {
-        using socket_type = int;
-
-        socket_type sock;
-        struct _ipv4
-        {
-            char* IP;
-            uint port;
-        }ipv4;
-        struct _ipv6                // 保留空间 可做联合体
-        {
-            char* IP;
-            uint port;
-        }ipv6;
-        
-    };
+        char* IP;
+        uint port;
+    }ipv4;
+    struct _ipv6                // 保留空间 可做联合体
+    {
+        char* IP;
+        uint port;
+    }ipv6;
+      
+};
 
 class Connection : public BaseConnection
 {
@@ -56,7 +55,6 @@ public:
     
     bool setSocket(socket_type sock);
     bool createBuffer();
-
     bool Initialize(ClientData* clientData, uint maxBufferSize = 512*1024U);
 
     // 获取下一条信息
@@ -80,20 +78,7 @@ public:
     void        hasReadAndUpdata(uint size);
     
     // 最大可接收长度
-    uint        getRecvSize(){                  
-        if (m_bIsFull == true)             // 存储已满
-        {
-            return 0;
-        }
-        if (m_iRecvOffset >= m_iReadOffset)
-        {
-            return m_iBufferSize - m_iRecvOffset;
-        }
-        else if (m_iRecvOffset < m_iReadOffset)
-        {
-            return m_iReadOffset - m_iRecvOffset;
-        }       
-    }
+    uint        getRecvSize();
     
     inline void setBufferSize(unsigned int size){
         m_iBufferSize = size;

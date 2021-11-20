@@ -9,50 +9,51 @@ namespace wlb
 
 SubReactor::SubReactor()
 {
-    epollfd = -1;
-    m_iEpollTimeOut = 0;
-    m_mapConns.clear();
+    this->epollfd = -1;
+    this->m_iEpollTimeOut = 0;
+    this->m_mapConns.clear();
 
-    m_bRunning = false;
-    m_iConnectCount.store(0);
+    this->m_bRunning = false;
+    this->m_iConnectCount.store(0);
 
-    m_pServer = nullptr;
+    this->m_pServer = nullptr;      
 }
 
 SubReactor::~SubReactor()
 {
-    if (epollfd != -1)
+    if (this->epollfd != -1)
     {
-        close(epollfd);
+        ::close(this->epollfd);
     }
+    this->m_pServer = nullptr;      // 不由自己构造，不负责析构
 }
 
 bool SubReactor::Initialize(ReactorServer* server)
 {
-    m_pServer = server;
-    if (m_pServer == nullptr)
+    this->m_pServer = server;
+    if (this->m_pServer == nullptr)
     {
         return false;
     }
     
-    epollfd = epoll_create(1);
-    if (epollfd == -1){
+    this->epollfd = epoll_create(1);
+    if (this->epollfd == -1){
         return false;
     }
     
-    m_bRunning = true;
-    m_iEpollTimeOut = m_pServer->getWorkEpollTimeOut();
+    this->m_bRunning = true;
+    this->m_iEpollTimeOut = this->m_pServer->getWorkEpollTimeOut();
 
     return true;
 }
 
 bool SubReactor::pushSocket(ClientData* clientData)
 {
-    if ( !add2Conncts(clientData) ){
+    if ( !this->add2Conncts(clientData) ){
         LOG(ERROR) << "cant add to conncts ";
         return false;
     }
-    if ( !add2Epoll(clientData->sock))
+    if ( !this->add2Epoll(clientData->sock))
     {
         LOG(ERROR) << "cant add to epoll ";
         return false;
@@ -65,9 +66,9 @@ void SubReactor::Run()
 {
     struct epoll_event events[MAXEVENTS];
     
-    while (m_bRunning)
+    while (this->m_bRunning)
     {
-        int infds = epoll_wait(epollfd, events, MAXEVENTS, m_iEpollTimeOut);
+        int infds = ::epoll_wait(this->epollfd, events, MAXEVENTS, this->m_iEpollTimeOut);
         
         if(infds < 0)   // 返回失败
         {
@@ -83,10 +84,10 @@ void SubReactor::Run()
     
         for (int nIndex = 0; nIndex < infds; ++nIndex)
         {
-            bool ok = ReadDataFromEvents(events[nIndex]);
+            bool ok = this->ReadDataFromEvents(events[nIndex]);
             if (!ok)
             {
-                RemoveAndCloseConn(events[nIndex]);
+                this->RemoveAndCloseConn(events[nIndex]);
                 continue;
             }
         }
@@ -97,16 +98,24 @@ void SubReactor::Run()
 bool SubReactor::add2Epoll(socket_type sock)
 {
     struct epoll_event ev;
-    memset(&ev, 0, sizeof(struct epoll_event));
+    try
+    {
+        ::memset(&ev, 0, sizeof(struct epoll_event));
+    }
+    catch(const std::exception& e)
+    {
+        LOG(ERROR) << e.what();
+    }
+    
     ev.data.fd = sock;
     ev.events = EPOLLIN;
     
-    return !epoll_ctl(epollfd, EPOLL_CTL_ADD, sock, &ev);
+    return !::epoll_ctl(epollfd, EPOLL_CTL_ADD, sock, &ev);
 }
 
 bool SubReactor::add2Conncts(ClientData* clientData)
 {
-    Connection* conn = new Connection();
+    Connection* conn = new(std::nothrow) Connection();
     if (conn == nullptr){
         return false;
     }
@@ -117,19 +126,19 @@ bool SubReactor::add2Conncts(ClientData* clientData)
     }
     
     {
-        std::lock_guard<std::mutex> l(m_mMutex);
+        std::lock_guard<std::mutex> l(this->m_mMutex);
         m_mapConns.insert(std::make_pair(clientData->sock, conn));
     }
-    m_iConnectCount++;
+    this->m_iConnectCount++;
 
-    m_pServer->onConnected(conn);
+    this->m_pServer->onConnected(conn);
 
     return true;
 }
 
 void SubReactor::Stop()
 {
-    m_bRunning = false;
+    this->m_bRunning = false;
 }
 
 bool SubReactor::ReadDataFromEvents(epoll_event& event)
@@ -144,7 +153,7 @@ bool SubReactor::ReadDataFromEvents(epoll_event& event)
         
         auto conn = iter->second;
         
-        auto recvSize = recv(conn->getSocket(),
+        auto recvSize = ::recv(conn->getSocket(),
                              conn->getBuffer()+conn->getRecvOffset(),
                              conn->getRecvSize(),
                              0);
@@ -163,7 +172,7 @@ bool SubReactor::ReadDataFromEvents(epoll_event& event)
         
         conn->hasReadAndUpdata(recvSize);   // 更新 recv offset
         
-        return m_pServer->onMessage(conn);
+        return this->m_pServer->onMessage(conn);
     }
     
     return true;
@@ -176,24 +185,32 @@ bool SubReactor::RemoveAndCloseConn(epoll_event& event)
     struct epoll_event ev;
     
     // 把已断开的客户端从epoll中删除
-    memset(&ev, 0, sizeof(struct epoll_event));
-    ev.data.fd = event.data.fd;
-    ev.events = EPOLLIN;
+    try
+    {
+        ::memset(&ev, 0, sizeof(struct epoll_event));
+        ev.data.fd = event.data.fd;
+        ev.events = EPOLLIN;
+        
+        ::epoll_ctl(this->epollfd, EPOLL_CTL_DEL, event.data.fd, &ev);
+        ::close(event.data.fd);
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+        return false;
+    }
     
-    epoll_ctl(epollfd, EPOLL_CTL_DEL, event.data.fd, &ev);
-    close(event.data.fd);
-    
-    // 从容器中删除
-    auto ite = m_mapConns.find(event.data.fd);
-    if (ite == m_mapConns.end())
+    // 从容器中删除连接
+    auto ite = this->m_mapConns.find(event.data.fd);
+    if (ite == this->m_mapConns.end())
     {
         return true;
     }
     
     delete(ite->second);
 
-    std::lock_guard<std::mutex> l(m_mMutex);
-    m_mapConns.erase(ite);
+    std::lock_guard<std::mutex> l(this->m_mMutex);
+    this->m_mapConns.erase(ite);
     
     return true;
 }

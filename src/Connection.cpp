@@ -217,4 +217,20 @@ void Connection::getMsgSize(uint16_t &size)
     }
 }
 
+uint Connection::getRecvSize()
+{
+    if (m_bIsFull == true) // 存储已满
+    {
+        return 0;
+    }
+    if (m_iRecvOffset >= m_iReadOffset)
+    {
+        return m_iBufferSize - m_iRecvOffset;
+    }
+    else if (m_iRecvOffset < m_iReadOffset)
+    {
+        return m_iReadOffset - m_iRecvOffset;
+    }
+}
+
 }

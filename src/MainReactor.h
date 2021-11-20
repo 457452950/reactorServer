@@ -33,24 +33,24 @@ public:
     void pushAcceptor(accept_ptr acceptor);
     
     void run();
-    void stop();
+    void stop();            
     void waitToExit();
     
 
 private:
-    void runLoop();
+    void runLoop();             // 工作线程循环
 
 private:
-    epoll_type                  epollfd;
+    epoll_type                  epollfd;            // 采用epoll，为端口、地址复用做扩展    
     int                         m_iEpollTimeout;
-    acceptVec                   accepts;
+    acceptVec                   accepts;            // 不负责析构
     
-    std::thread*                m_pMainThread;
+    std::thread*                m_pMainThread;      // 主线程 监听线程
     SubReactorMgr               m_ReactorMgr;
     unsigned int                m_iWorkThreadCount;
 
-    bool                        m_bRunning;
-    ReactorServer*              m_pServer;
+    bool                        m_bRunning;         // 工作状态标志
+    ReactorServer*              m_pServer;          
 };
 
 }

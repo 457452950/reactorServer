@@ -59,7 +59,6 @@ public:
     inline uint getMaxBufferSize() {
         int _size = (_server->SetMaxBufferSize() > 5120) 
                 ? _server->SetMaxBufferSize() : 5120;
-        
         return _size;
     }
     inline int getListenEpollTimeOut() {
