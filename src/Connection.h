@@ -23,7 +23,7 @@ namespace wlb
             char* IP;
             uint port;
         }ipv4;
-        struct _ipv6
+        struct _ipv6                // 保留空间 可做联合体
         {
             char* IP;
             uint port;
@@ -59,88 +59,12 @@ public:
 
     bool Initialize(ClientData* clientData, uint maxBufferSize = 512*1024U);
 
-    int readNextMessage(std::string& msg){
-        uint16_t size;
-        msg.clear();
-
-        if ( !m_bIsFull && ((m_iRecvOffset - m_iReadOffset < 4) ||
-                (m_iBufferSize - m_iReadOffset) + (m_iRecvOffset) <= 4) )
-        {
-            LOG(INFO) << "no enough message to read";
-            return 0;
-        }
-        
-        if ( m_iReadOffset + 4 <= m_iBufferSize )
-        {
-            // LOG(INFO) << "m_iReadOffset " <<  m_iReadOffset;
-            memcpy(&size, m_pBuffer + m_iReadOffset, 4);
-        }
-        else
-        {
-            char* temp = new char[4];
-            int back = m_iBufferSize - m_iReadOffset;
-            memcpy(temp, m_pBuffer+m_iReadOffset, back);
-            memcpy(temp+back, m_pBuffer, 4-back);
-            memcpy(&size, temp, 4);
-        }
-        LOG(INFO) << "recv size : " << size;
-        if (size <= 0)
-        {
-            LOG(WARNING) << "recv size <= 0!!!";
-            m_iReadOffset += 4;
-            return 1;
-        }
-
-        if (m_iRecvOffset > m_iReadOffset)
-        { 
-            // havent enough message
-            if (size + 4 > m_iRecvOffset - m_iReadOffset )
-            {
-                // LOG(INFO) << "no enough message to read"
-                //     << "size : " << size
-                //     << " recv offset : " << m_iRecvOffset
-                //     << " read offset : " << m_iReadOffset;
-                return 0;
-            }
-            msg.assign(m_pBuffer+m_iReadOffset+4,
-                        size);
-            m_iReadOffset += size + 4;
-            // LOG(INFO) << "msg : " << msg
-            //         << " recv offset : " << m_iRecvOffset
-            //         << " read offset : " << m_iReadOffset;
-            return size;
-        }
-        else if (m_iRecvOffset <= m_iReadOffset)
-        {
-            // havent enough message
-            // size + 4 > (m_iBufferSize - m_iReadOffset + m_iRecvOffset + 1)
-            if (m_iReadOffset - m_iRecvOffset + size + 4 > m_iBufferSize)
-            {
-                LOG(INFO) << "no enough message to read";
-                return 0;
-            }
-            if ( m_iReadOffset + 4 >= m_iBufferSize )
-            {
-                int start = (m_iReadOffset + 4) % m_iBufferSize;
-                msg.append(m_pBuffer + start, size);
-            }
-            else
-            {
-                int back = (m_iBufferSize - m_iReadOffset - 4 + 1 > size) ? 
-                            size : m_iBufferSize - m_iReadOffset - 4 + 1;
-                LOG(DEBUG) << "back : " << back << " front : " << size - back;
-                msg.append(m_pBuffer + m_iReadOffset + 4, back);
-                msg.append(m_pBuffer, size - back);
-            }
-
-            LOG(INFO) << "msg : " << msg;
-            m_iReadOffset = (m_iReadOffset + size + 4) % m_iBufferSize;
-            return size;
-        }
-        return 0;
-    }
+    // 获取下一条信息
+    int readNextMessage(std::string& msg);
+private:
+    void getMsgSize(uint16_t& size);
     
-    
+public:
     inline socket_type getSocket(){
         return m_sSock;
     }
@@ -154,8 +78,9 @@ public:
     
     // 接受数据，刷新写指针
     void        hasReadAndUpdata(uint size);
-
-    uint        getRecvSize(){                  // 最大可接收长度
+    
+    // 最大可接收长度
+    uint        getRecvSize(){                  
         if (m_bIsFull == true)             // 存储已满
         {
             return 0;
@@ -180,10 +105,11 @@ public:
 private:
     socket_type             m_sSock;
     char*                   m_pBuffer;
-    unsigned int            m_iBufferSize;
-    uint                    m_iReadOffset;
-    uint                    m_iRecvOffset;
+    unsigned int            m_iBufferSize;      // 缓冲区大小
+    uint                    m_iReadOffset;      // 读指针、消费者指针
+    uint                    m_iRecvOffset;      // 写指针、生产者指针
 
+    // 对端信息
     union _ClientData{
         struct _ipv4{
             char* IP;
@@ -196,9 +122,9 @@ private:
         
     }                       m_sClientData;
     
-    bool                    m_bRunning;
-    bool                    m_bIsFull;
-    char*                   m_strErrorStr;
+    bool                    m_bRunning;     // 暂未启用
+    bool                    m_bIsFull;      // 状态值：缓冲区满
+    char*                   m_strErrorStr;  // 错误信息
 };
 
 }

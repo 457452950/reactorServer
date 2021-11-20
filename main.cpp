@@ -39,9 +39,14 @@ int main()
     Logger::Init(0, "rs");
     
     auto* a = CreateAccepter(4001);
-    test * t = new test();
-    if  (a == nullptr)
+    if (a == nullptr)
+    {
         return -1;
+    }
+    
+
+    test * t = new(std::nothrow) test();
+
     MainReactor m;
     if ( !m.Initialize(t, 4))
     {

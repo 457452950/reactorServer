@@ -23,7 +23,7 @@ public:
     
 };
 
-BaseAcceptor* CreateAccepter(int port);
+BaseAcceptor* CreateAccepter(int port);         // 获取监听者
 
 }
 
