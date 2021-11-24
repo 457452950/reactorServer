@@ -20,7 +20,7 @@ public:
         LOG(INFO);
     };
     virtual void onMessage(BaseConnection* connect, std::string& msg) {
-        // LOG(INFO) << msg;
+        LOG(INFO) << msg;
         _count++;
         if ( !(_count % 100000U) )
         {
