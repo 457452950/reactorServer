@@ -158,9 +158,9 @@ bool SubReactor::ReadDataFromEvents(epoll_event& event)
                              conn->getRecvSize(),
                              0);
 
-        // LOG(INFO) << "max recv : " << conn->getRecvSize()
-        //             << " real recv : " << recvSize
-        //             << " recv offset : " << conn->getRecvOffset();
+        LOG(INFO) << "max recv : " << conn->getRecvSize()
+                     << " real recv : " << recvSize
+                     << " recv offset : " << conn->getRecvOffset();
     
         // 发生了错误或socket被对方关闭
         if (recvSize <= 0 && conn->getRecvSize())

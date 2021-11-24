@@ -91,19 +91,19 @@ void Connection::hasReadAndUpdata(uint size)
     }
 }
 
-void Connection::send(const char *msg)
+void Connection::send(const char *msg, uint msg_size)
 {
-    auto msgLen = ::strlen(msg);
-    if (msgLen)
+    if (msg_size == 0)
     {
+        LOG(WARNING) << "msg cant be empty";
         return;
     }
 
-    char *sendMsg = new (std::nothrow) char[msgLen + 4 + 1];
-    uint32_t strLen = msgLen;
+    char *sendMsg = new (std::nothrow) char[msg_size + 4 + 1];
+    uint32_t strLen = msg_size;
     ::memcpy(sendMsg, (void *)&strLen, 4);
     ::strcpy(sendMsg + 4, msg);
-    ssize_t sendLen = ::send(this->m_sSock, (void *)sendMsg, msgLen + 4, 0);
+    ssize_t sendLen = ::send(this->m_sSock, (void *)sendMsg, msg_size + 4, 0);
 
     LOG(INFO) << "send size : " << sendLen << " str : " << msg;
 }
@@ -112,10 +112,11 @@ void Connection::send(const std::string &msg)
 {
     if (msg.empty())
     {
+        LOG(WARNING) << "msg cant be empty";
         return;
     }
 
-    this->send(msg.c_str());
+    this->send(msg.c_str(), msg.size());
 }
 
 int Connection::readNextMessage(std::string &msg)
@@ -130,7 +131,7 @@ int Connection::readNextMessage(std::string &msg)
     {
         if ((pWrite - pRead < 4) || (this->m_iBufferSize - pRead + pWrite) <= 4)
         {
-            // LOG(INFO) << "no enough message to read";
+            LOG(INFO) << "no enough message to read";
             return 0;
         }
     }
@@ -138,7 +139,7 @@ int Connection::readNextMessage(std::string &msg)
     // read msg len
     this->getMsgSize(size);
 
-    // LOG(INFO) << "recv size : " << size;
+    LOG(INFO) << "recv size : " << size;
     if (size == 0)
     {
         LOG(WARNING) << "recv size <= 0!!!";
@@ -169,11 +170,11 @@ int Connection::readNextMessage(std::string &msg)
         else
         {
             int back = (m_iBufferSize - pRead - 4 + 1 > size) ? size : m_iBufferSize - pRead - 4 + 1;
-            // LOG(DEBUG) << "back : " << back << " front : " << size - back;
+            LOG(DEBUG) << "back : " << back << " front : " << size - back;
             msg.append(m_pBuffer + pRead + 4, back);
             msg.append(m_pBuffer, size - back);
         }
-        // LOG(INFO) << "msg : " << msg;
+        LOG(INFO) << "msg : " << msg;
     }
 
     // update 读指针

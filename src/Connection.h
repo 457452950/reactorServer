@@ -37,7 +37,7 @@ public:
     using socket_ptr    = socket_type*;
 
 public:
-    virtual void send(const char* msg) override;
+    virtual void send(const char* msg, uint msg_size) override;
     virtual void send(const std::string& msg) override;
     virtual char* getErrorStr() override{
         return m_strErrorStr;
