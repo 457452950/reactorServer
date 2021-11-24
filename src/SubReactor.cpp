@@ -152,25 +152,16 @@ bool SubReactor::ReadDataFromEvents(epoll_event& event)
         }
         
         auto conn = iter->second;
-        
-        auto recvSize = ::recv(conn->getSocket(),
-                             conn->getBuffer()+conn->getRecvOffset(),
-                             conn->getRecvSize(),
-                             0);
 
-        // LOG(INFO) << "max recv : " << conn->getRecvSize()
-        //             << " real recv : " << recvSize
-        //             << " recv offset : " << conn->getRecvOffset();
+        bool ok = conn->recv();
     
         // 发生了错误或socket被对方关闭
-        if (recvSize <= 0 && conn->getRecvSize())
+        if (!ok)
         {
             LOG(INFO) << "client eventfd(" << event.data.fd << ") disconnected";
             m_pServer->onDisConnected(conn);
             return false;
         }
-        
-        conn->hasReadAndUpdata(recvSize);   // 更新 recv offset
         
         return this->m_pServer->onMessage(conn);
     }

@@ -14,13 +14,13 @@ public:
     virtual void onMessage(BaseConnection* connect, std::string& msg) = 0;
 
     // 重载来设置最大存储容量
-    inline virtual uint SetMaxBufferSize() {
+    virtual uint SetMaxBufferSize() {
         return 512 * 1024U;
     }
-    inline virtual int SetListenEpollTimeOut() {    // ms
+    virtual int SetListenEpollTimeOut() {    // ms
         return -1;
     }
-    inline virtual int SetWorkEpollTimeOut() {      // ms
+    virtual int SetWorkEpollTimeOut() {      // ms
         return -1;
     }
 

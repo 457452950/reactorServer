@@ -77,6 +77,22 @@ bool Connection::createBuffer()
     return true;
 }
 
+bool Connection::recv()
+{
+    auto recvSize = ::recv(this->m_sSock,
+                m_pBuffer+m_iRecvOffset,
+                this->getRecvSize(),
+                0);
+                
+    if (recvSize <= 0 && this->getRecvSize())
+    {
+        return false;
+    }
+    
+    this->hasReadAndUpdata(recvSize);   // 更新 recv offset
+    return true;
+}
+
 // 更新写指针位置
 void Connection::hasReadAndUpdata(uint size)
 {

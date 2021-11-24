@@ -57,21 +57,17 @@ public:
     bool createBuffer();
     bool Initialize(ClientData* clientData, uint maxBufferSize = 512*1024U);
 
+    // 接收
+    bool recv();
+
     // 获取下一条信息
     int readNextMessage(std::string& msg);
 private:
     void getMsgSize(uint16_t& size);
     
-public:
+private:
     inline socket_type getSocket(){
         return m_sSock;
-    }
-    
-    inline char * getBuffer(){
-        return m_pBuffer;
-    }
-    inline uint getRecvOffset(){
-        return m_iRecvOffset;
     }
     
     // 接受数据，刷新写指针
@@ -82,9 +78,6 @@ public:
     
     inline void setBufferSize(unsigned int size){
         m_iBufferSize = size;
-    }
-    inline const unsigned int getBufferSize() {
-        return m_iBufferSize;
     }
     
 private:

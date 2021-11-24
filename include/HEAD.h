@@ -14,6 +14,7 @@
 #include <atomic>
 #include <thread>
 #include <mutex>
+#include <stdint.h>
 
 #include <sys/types.h>
 #include <sys/socket.h>
