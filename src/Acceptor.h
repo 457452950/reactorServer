@@ -14,7 +14,6 @@ namespace wlb
 
 class Acceptor : public BaseAcceptor
 {
-    
 public:
     Acceptor();             // bind and listen
     ~Acceptor();

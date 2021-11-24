@@ -128,7 +128,7 @@ void MainReactor::runLoop()
         
         for (int i = 0; i < infds; ++i)
         {
-            accept_type::endpoint client_endPoint;
+            endpoint client_endPoint;
             socklen_t len = sizeof(client_endPoint);
             
             socket_type clientsock = ::accept(

@@ -12,10 +12,10 @@
 
 namespace wlb
 {
+using namespace rs;
 
 struct ClientData
 {
-    using socket_type = int;
     socket_type sock;
     struct _ipv4
     {
@@ -32,10 +32,6 @@ struct ClientData
 
 class Connection : public BaseConnection
 {
-public:
-    using socket_type   = ClientData::socket_type;
-    using socket_ptr    = socket_type*;
-
 public:
     virtual void send(const char* msg, uint msg_size) override;
     virtual void send(const std::string& msg) override;
@@ -54,8 +50,7 @@ public:
     ~Connection();
     
     bool setSocket(socket_type sock);
-    bool createBuffer();
-    bool Initialize(ClientData* clientData, uint maxBufferSize = 512*1024U);
+    bool Initialize(ClientData* clientData, uint32_t maxBufferSize = 512*1024U);
 
     // 接收
     bool recv();
@@ -63,12 +58,9 @@ public:
     // 获取下一条信息
     int readNextMessage(std::string& msg);
 private:
-    void getMsgSize(uint16_t& size);
+    bool createBuffer();
     
-private:
-    inline socket_type getSocket(){
-        return m_sSock;
-    }
+    void getMsgSize(uint16_t& size);
     
     // 接受数据，刷新写指针
     void        hasReadAndUpdata(uint size);

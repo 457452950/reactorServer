@@ -13,14 +13,11 @@
 
 namespace wlb
 {
+using namespace rs;
 
 class MainReactor
 {
 public:
-    using epoll_type    = int;
-    using socket_type   = int;
-    using socket_ptr    = socket_type*;
-    
     using accept_type   = BaseAcceptor;
     using accept_ptr    = accept_type*;
     using acceptVec     = std::vector<accept_type *>;

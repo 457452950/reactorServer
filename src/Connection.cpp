@@ -83,7 +83,7 @@ bool Connection::recv()
                 m_pBuffer+m_iRecvOffset,
                 this->getRecvSize(),
                 0);
-                
+
     if (recvSize <= 0 && this->getRecvSize())
     {
         return false;

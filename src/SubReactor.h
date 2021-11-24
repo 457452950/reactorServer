@@ -13,13 +13,11 @@
 namespace wlb
 {
 
+using namespace rs;
+
 class SubReactor
 {
 public:
-    using socket_type = Connection::socket_type;
-    using socket_ptr = socket_type*;
-    
-    using epoll_type = int;
     
     using Connects = std::set<Connection*>;
     using ConnectMap = std::map<socket_type, Connection*>;

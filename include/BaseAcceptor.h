@@ -5,17 +5,15 @@
 #ifndef REACTORSERVER_BASEACCEPTOR_H
 #define REACTORSERVER_BASEACCEPTOR_H
 
-#include "HEAD.h"
+#include "DEFINE.h"
 
 namespace wlb
 {
 
+using namespace rs;
+
 class BaseAcceptor
 {
-public:
-    using socket_type = int;
-    using endpoint = sockaddr_in;
-
 public:
     virtual ~BaseAcceptor() {}
     
@@ -23,7 +21,7 @@ public:
     
 };
 
-BaseAcceptor* CreateAccepter(int port);         // 获取监听者
+BaseAcceptor* CreateAccepter(int32_t port);         // 获取监听者
 
 }
 
