@@ -21,6 +21,21 @@ using socket_ptr  = socket_type*;
 
 using endpoint = sockaddr_in;
 
+struct ClientData
+{
+    socket_type sock;
+    struct _ipv4
+    {
+        char* IP;
+        uint port;
+    }ipv4;
+    struct _ipv6                // 保留空间 可做联合体
+    {
+        char* IP;
+        uint port;
+    }ipv6;
+      
+};
 
 
 }

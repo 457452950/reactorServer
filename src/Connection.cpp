@@ -41,7 +41,9 @@ bool Connection::setSocket(socket_type sock)
         return false;
 }
 
-bool Connection::Initialize(ClientData *clientData, uint maxBufferSize)
+bool Connection::Initialize(ClientData *clientData, 
+                            uint maxBufferSize, 
+                            uint32_t maxMessageSize)
 {
     this->m_sSock = clientData->sock;
     this->m_sClientData.ipv4.IP = clientData->ipv4.IP;

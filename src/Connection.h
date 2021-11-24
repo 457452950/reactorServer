@@ -8,29 +8,15 @@
 #include "HEAD.h"
 #include "DEFINE.h"
 #include "BaseConnection.h"
+#include "BaseSession.h"
 
 
 namespace wlb
 {
 using namespace rs;
 
-struct ClientData
-{
-    socket_type sock;
-    struct _ipv4
-    {
-        char* IP;
-        uint port;
-    }ipv4;
-    struct _ipv6                // 保留空间 可做联合体
-    {
-        char* IP;
-        uint port;
-    }ipv6;
-      
-};
 
-class Connection : public BaseConnection
+class Connection : public BaseConnection, public BaseSession
 {
 public:
     virtual void send(const char* msg, uint msg_size) override;
@@ -47,16 +33,18 @@ public:
     
 public:
     Connection();
-    ~Connection();
+    virtual ~Connection();
     
-    bool setSocket(socket_type sock);
-    bool Initialize(ClientData* clientData, uint32_t maxBufferSize = 512*1024U);
+    bool setSocket(socket_type sock) override;
+    bool Initialize(ClientData* clientData, 
+                    uint32_t maxBufferSize = 512*1024U, 
+                    uint32_t maxMessageSize = 512*1024U)override;
 
     // 接收
-    bool recv();
+    bool recv() override;
 
     // 获取下一条信息
-    int readNextMessage(std::string& msg);
+    int readNextMessage(std::string& msg) override;
 private:
     bool createBuffer();
     
