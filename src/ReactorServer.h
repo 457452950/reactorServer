@@ -33,15 +33,15 @@ public:
         return false;
     }
 
-    void onConnected(Connection* conn){
+    void onConnected(BaseSession* conn){
         _server->onConnected(conn);
     }
-    void onDisConnected(Connection* conn){
+    void onDisConnected(BaseSession* conn){
         _server->onDisConnected(conn);
     }
 
     // 读取成功返回成功 失败则断开连接
-    bool onMessage(Connection* conn){
+    bool onMessage(BaseSession* conn){
         std::string cMsg;
         while ( conn->readNextMessage(cMsg) )
         {

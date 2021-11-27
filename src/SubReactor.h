@@ -19,8 +19,8 @@ class SubReactor
 {
 public:
     
-    using Connects = std::set<Connection*>;
-    using ConnectMap = std::map<socket_type, Connection*>;
+    using Connects = std::set<BaseSession*>;
+    using ConnectMap = std::map<socket_type, BaseSession*>;
 
 public:
     SubReactor();

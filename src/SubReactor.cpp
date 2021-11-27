@@ -115,12 +115,12 @@ bool SubReactor::add2Epoll(socket_type sock)
 
 bool SubReactor::add2Conncts(ClientData* clientData)
 {
-    Connection* conn = new(std::nothrow) Connection();
+    BaseSession* conn = new(std::nothrow) Connection();
     if (conn == nullptr){
         return false;
     }
     
-    if ( !conn->Initialize(clientData, this->m_pServer->getMaxBufferSize()))
+    if ( !conn->Initialize(clientData, this->m_pServer->getMaxBufferSize(), this->m_pServer->getMaxBufferSize()))
     {
         return false;
     }

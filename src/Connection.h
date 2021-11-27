@@ -16,7 +16,7 @@ namespace wlb
 using namespace rs;
 
 
-class Connection : public BaseConnection, public BaseSession
+class Connection : public BaseSession
 {
 public:
     virtual void send(const char* msg, uint msg_size) override;
