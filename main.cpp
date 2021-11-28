@@ -7,6 +7,7 @@
 #include "src/MainReactor.h"
 
 using namespace wlb;
+using namespace Log;
 
 std::atomic_int64_t _count{0};
 
@@ -36,7 +37,7 @@ public:
 
 int main()
 {
-    Logger::Init(0, "rs");
+    Logger::Init(Log::LOG_LEVEL::DEBUG, "rs");
     
     auto* a = CreateAccepter(4001);
     if (a == nullptr)

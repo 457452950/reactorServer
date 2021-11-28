@@ -6,6 +6,7 @@
 
 namespace wlb
 {
+    using namespace Log;
 
 Connection::Connection() : m_sSock(-1)
 {
@@ -113,7 +114,7 @@ void Connection::send(const char *msg, uint msg_size)
 {
     if (msg_size == 0)
     {
-        LOG(WARNING) << "msg cant be empty";
+        LOG(WARN) << "msg cant be empty";
         return;
     }
 
@@ -130,7 +131,7 @@ void Connection::send(const std::string &msg)
 {
     if (msg.empty())
     {
-        LOG(WARNING) << "msg cant be empty";
+        LOG(WARN) << "msg cant be empty";
         return;
     }
 
@@ -160,7 +161,7 @@ int Connection::readNextMessage(std::string &msg)
     LOG(INFO) << "recv size : " << size;
     if (size == 0)
     {
-        LOG(WARNING) << "recv size <= 0!!!";
+        LOG(WARN) << "recv size <= 0!!!";
     }
     else if (pWrite > pRead)
     {
@@ -225,7 +226,7 @@ void Connection::getMsgSize(uint16_t &size)
         int back = this->m_iBufferSize - pRead;
         if (back > 4 || back < 0)
         {
-            LOG(WARNING) << "error pRead:" << pRead << " buff size:" << m_iBufferSize;
+            LOG(WARN) << "error pRead:" << pRead << " buff size:" << m_iBufferSize;
             size = 0;
             return;
         }

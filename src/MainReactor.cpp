@@ -6,6 +6,7 @@
 
 namespace wlb
 {
+    using namespace Log;
 
 MainReactor::MainReactor()
 {
@@ -137,7 +138,7 @@ void MainReactor::runLoop()
                     &len);
             if (clientsock < 0)
             {
-                LOG(WARNING) << "accept failed ,errno : " << errno << " socketfd = " << events[i].data.fd;
+                LOG(WARN) << "accept failed ,errno : " << errno << " socketfd = " << events[i].data.fd;
                 continue;
             }
 

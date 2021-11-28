@@ -7,6 +7,8 @@
 namespace wlb
 {
 
+using namespace Log;
+
 Acceptor::Acceptor()
 {
     this->m_sSock = -1;

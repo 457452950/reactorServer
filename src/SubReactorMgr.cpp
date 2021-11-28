@@ -6,6 +6,7 @@
 
 namespace wlb
 {
+    using namespace Log;
 
 SubReactorMgr::SubReactorMgr()
 {
