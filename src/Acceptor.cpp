@@ -7,6 +7,8 @@
 namespace wlb
 {
 
+using namespace Log;
+
 Acceptor::Acceptor(int port)
 {
     m_sSock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
