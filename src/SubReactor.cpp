@@ -149,6 +149,7 @@ bool SubReactor::ReadDataFromEvents(epoll_event& event)
         auto iter = m_mapConns.find(event.data.fd);
         if ( iter == m_mapConns.end())
         {
+            LOG(ERROR) << "cant find fd:" << event.data.fd;
             return false;
         }
         
