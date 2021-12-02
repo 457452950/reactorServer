@@ -15,13 +15,13 @@ class test : public BaseServer
 {
 public:
     virtual void onConnected(BaseConnection* connect) {
-        LOG(INFO) << connect->getPeerIp() << " : " << connect->getPeerPort();
+        LOG(L_INFO) << connect->getPeerIp() << " : " << connect->getPeerPort();
     };
     virtual void onDisConnected(BaseConnection* connect) {
-        LOG(INFO);
+        LOG(L_INFO);
     };
     virtual void onMessage(BaseConnection* connect, std::string& msg) {
-        LOG(INFO) << msg;
+        LOG(L_INFO) << msg;
         _count++;
         if ( !(_count % 100000U) )
         {
@@ -37,7 +37,7 @@ public:
 
 int main()
 {
-    Logger::Init(Log::LOG_LEVEL::DEBUG, "rs");
+    Logger::Init(Log::LOG_LEVEL::L_DEBUG, "rs");
     
     auto* a = CreateAccepter(4001);
     if (a == nullptr)
@@ -51,7 +51,7 @@ int main()
     MainReactor m;
     if ( !m.Initialize(t, 4))
     {
-        LOG(ERROR) << "Initialize error ";
+        LOG(L_ERROR) << "Initialize error ";
         return -1;
     }
     m.pushAcceptor(a);

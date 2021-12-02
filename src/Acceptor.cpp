@@ -24,29 +24,29 @@ bool Acceptor::Initialize(int port)
     this->m_sSock = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);        // tcp v4
     if (m_sSock < 0)
     {
-        LOG(ERROR) << "socket false ,errno : " << errno;
+        LOG(L_ERROR) << "socket false ,errno : " << errno;
         return false;
     }
-    LOG(INFO) << "socket ok : " << m_sSock;
+    LOG(L_INFO) << "socket ok : " << m_sSock;
     
     this->setOpt();
     
     int res = this->bind(port);
     if (res < 0)
     {
-        LOG(ERROR) << "bind failed ,errno : " << errno;
+        LOG(L_ERROR) << "bind failed ,errno : " << errno;
         ::close(this->m_sSock);
         return false; 
     }
-    LOG(INFO) << "bind ok !";
+    LOG(L_INFO) << "bind ok !";
     
     if ( ::listen(this->m_sSock, LISTEN_LIST_COUNT) != 0 )
     {
-        LOG(ERROR) << "listen failed ,errno : " << errno;
+        LOG(L_ERROR) << "listen failed ,errno : " << errno;
         ::close(this->m_sSock);
         return false;
     }
-    LOG(INFO) << "listen ok !";
+    LOG(L_INFO) << "listen ok !";
     return true;
 }
 

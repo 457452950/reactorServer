@@ -114,7 +114,7 @@ void Connection::send(const char *msg, uint msg_size)
 {
     if (msg_size == 0)
     {
-        LOG(WARN) << "msg cant be empty";
+        LOG(L_WARN) << "msg cant be empty";
         return;
     }
 
@@ -124,14 +124,14 @@ void Connection::send(const char *msg, uint msg_size)
     ::strcpy(sendMsg + 4, msg);
     ssize_t sendLen = ::send(this->m_sSock, (void *)sendMsg, msg_size + 4, 0);
 
-    LOG(INFO) << "send size : " << sendLen << " str : " << msg;
+    LOG(L_INFO) << "send size : " << sendLen << " str : " << msg;
 }
 
 void Connection::send(const std::string &msg)
 {
     if (msg.empty())
     {
-        LOG(WARN) << "msg cant be empty";
+        LOG(L_WARN) << "msg cant be empty";
         return;
     }
 
@@ -150,7 +150,7 @@ int Connection::readNextMessage(std::string &msg)
     {
         if ((pWrite - pRead < 4) || (this->m_iBufferSize - pRead + pWrite) <= 4)
         {
-            LOG(INFO) << "no enough message to read";
+            LOG(L_INFO) << "no enough message to read";
             return 0;
         }
     }
@@ -158,10 +158,10 @@ int Connection::readNextMessage(std::string &msg)
     // read msg len
     this->getMsgSize(size);
 
-    LOG(INFO) << "recv size : " << size;
+    LOG(L_INFO) << "recv size : " << size;
     if (size == 0)
     {
-        LOG(WARN) << "recv size <= 0!!!";
+        LOG(L_WARN) << "recv size <= 0!!!";
     }
     else if (pWrite > pRead)
     {
@@ -178,7 +178,7 @@ int Connection::readNextMessage(std::string &msg)
         // size + 4 > (m_iBufferSize - pRead + pWrite + 1)
         if (pRead - pWrite + size + 4 > m_iBufferSize)
         {
-            LOG(INFO) << "no enough message to read";
+            LOG(L_INFO) << "no enough message to read";
             return 0;
         }
         if (pRead + 4 >= m_iBufferSize)
@@ -189,11 +189,11 @@ int Connection::readNextMessage(std::string &msg)
         else
         {
             int back = (m_iBufferSize - pRead - 4 + 1 > size) ? size : m_iBufferSize - pRead - 4 + 1;
-            LOG(DEBUG) << "back : " << back << " front : " << size - back;
+            LOG(L_DEBUG) << "back : " << back << " front : " << size - back;
             msg.append(m_pBuffer + pRead + 4, back);
             msg.append(m_pBuffer, size - back);
         }
-        LOG(INFO) << "msg : " << msg;
+        LOG(L_INFO) << "msg : " << msg;
     }
 
     // update 读指针
@@ -210,7 +210,7 @@ void Connection::getMsgSize(uint16_t &size)
 
     if (pRead + 4 <= this->m_iBufferSize)
     {
-        // LOG(INFO) << "m_iReadOffset " <<  m_iReadOffset;
+        // LOG(L_INFO) << "m_iReadOffset " <<  m_iReadOffset;
         memcpy(&size, m_pBuffer + pRead, 4);
     }
     else
@@ -218,7 +218,7 @@ void Connection::getMsgSize(uint16_t &size)
         char *temp = new (std::nothrow) char[4];
         if (temp == nullptr)
         {
-            LOG(INFO) << "new error bad allocate";
+            LOG(L_INFO) << "new error bad allocate";
             size = 0;
             return;
         }
@@ -226,7 +226,7 @@ void Connection::getMsgSize(uint16_t &size)
         int back = this->m_iBufferSize - pRead;
         if (back > 4 || back < 0)
         {
-            LOG(WARN) << "error pRead:" << pRead << " buff size:" << m_iBufferSize;
+            LOG(L_WARN) << "error pRead:" << pRead << " buff size:" << m_iBufferSize;
             size = 0;
             return;
         }

@@ -51,12 +51,12 @@ bool SubReactor::Initialize(ReactorServer* server)
 bool SubReactor::pushSocket(ClientData* clientData)
 {
     if ( !this->add2Conncts(clientData) ){
-        LOG(ERROR) << "cant add to conncts ";
+        LOG(L_ERROR) << "cant add to conncts ";
         return false;
     }
     if ( !this->add2Epoll(clientData->sock))
     {
-        LOG(ERROR) << "cant add to epoll ";
+        LOG(L_ERROR) << "cant add to epoll ";
         return false;
     }
     
@@ -73,13 +73,13 @@ void SubReactor::Run()
         
         if(infds < 0)   // 返回失败
         {
-            LOG(ERROR) << "epoll_wait() failed. errno :" << errno;
+            LOG(L_ERROR) << "epoll_wait() failed. errno :" << errno;
             break;
         }
         
         if (infds == 0)     // 超时
         {
-            // LOG(INFO) << "epoll_wait() timeout.";
+            // LOG(L_INFO) << "epoll_wait() timeout.";
             continue;
         }
     
@@ -93,7 +93,7 @@ void SubReactor::Run()
             }
         }
     }
-    LOG(INFO) << "out of work ,thread stop ";
+    LOG(L_INFO) << "out of work ,thread stop ";
 }
 
 bool SubReactor::add2Epoll(socket_type sock)
@@ -105,7 +105,7 @@ bool SubReactor::add2Epoll(socket_type sock)
     }
     catch(const std::exception& e)
     {
-        LOG(ERROR) << e.what();
+        LOG(L_ERROR) << e.what();
     }
     
     ev.data.fd = sock;
@@ -149,7 +149,7 @@ bool SubReactor::ReadDataFromEvents(epoll_event& event)
         auto iter = m_mapConns.find(event.data.fd);
         if ( iter == m_mapConns.end())
         {
-            LOG(ERROR) << "cant find fd:" << event.data.fd;
+            LOG(L_ERROR) << "cant find fd:" << event.data.fd;
             return false;
         }
         
@@ -160,7 +160,7 @@ bool SubReactor::ReadDataFromEvents(epoll_event& event)
         // 发生了错误或socket被对方关闭
         if (!ok)
         {
-            LOG(INFO) << "client eventfd(" << event.data.fd << ") disconnected";
+            LOG(L_INFO) << "client eventfd(" << event.data.fd << ") disconnected";
             m_pServer->onDisConnected(conn);
             return false;
         }
@@ -173,7 +173,7 @@ bool SubReactor::ReadDataFromEvents(epoll_event& event)
 
 bool SubReactor::RemoveAndCloseConn(epoll_event& event)
 {
-    LOG(INFO) << "close connect";
+    LOG(L_INFO) << "close connect";
 
     struct epoll_event ev;
     
