@@ -17,11 +17,11 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/epoll.h>
-#include <unistd.h>
+#include <stdint.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <cerrno>
 
-#include "utils/include/Logger.h"
+#include "Logger.h"
 
 #endif //REACTORSERVER_HEAD_H

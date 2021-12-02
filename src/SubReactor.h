@@ -5,8 +5,7 @@
 #ifndef REACTORSERVER_SUBREACTOR_H
 #define REACTORSERVER_SUBREACTOR_H
 
-#include "HEAD.h"
-#include "DEFINE.h"
+#include "../include/DEFINE.h"
 #include "Connection.h"
 
 namespace wlb
@@ -16,11 +15,6 @@ namespace wlb
 class SubReactor
 {
 public:
-    using socket_type = int;
-    using socket_ptr = socket_type*;
-    
-    using epoll_type = int;
-    
     using Connects = std::set<Connection*>;
 
 public:

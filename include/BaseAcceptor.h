@@ -13,7 +13,6 @@ namespace wlb
 class BaseAcceptor
 {
 public:
-    using socket_type = int;
     using endpoint = sockaddr_in;
 
 public:
@@ -22,6 +21,8 @@ public:
     virtual socket_type getSocket() = 0;
     
 };
+
+BaseAcceptor* createAcceptor(uint32_t port);
 
 }
 

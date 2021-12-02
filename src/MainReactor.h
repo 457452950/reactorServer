@@ -5,9 +5,9 @@
 #ifndef REACTORSERVER_MAINREACTOR_H
 #define REACTORSERVER_MAINREACTOR_H
 
-#include "HEAD.h"
-#include "DEFINE.h"
-#include "BaseAcceptor.h"
+#include "../include/HEAD.h"
+#include "../include/DEFINE.h"
+#include "../include/BaseAcceptor.h"
 
 namespace wlb
 {
@@ -15,10 +15,6 @@ namespace wlb
 class MainReactor
 {
 public:
-    using epoll_type = int;
-    using socket_type = int;
-    using socket_ptr  = socket_type*;
-    
     using accept_type = BaseAcceptor;
     using accept_ptr = accept_type*;
     using acceptVec = std::vector<accept_type *>;

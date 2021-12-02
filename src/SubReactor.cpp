@@ -61,7 +61,7 @@ bool SubReactor::add2Epoll(socket_type sock)
     return !epoll_ctl(epollfd, EPOLL_CTL_ADD, sock, &ev);
 }
 
-bool SubReactor::add2Conncts(SubReactor::socket_type sock)
+bool SubReactor::add2Conncts(socket_type sock)
 {
     Connection* conn = new Connection();
     if (conn == nullptr){

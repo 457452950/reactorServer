@@ -19,7 +19,7 @@ bool MainReactor::Initialize()
     epollfd = epoll_create(1);
     if (epollfd < 0)
     {
-        LOG(ERROR) << "epoll_create error ,errno : " << errno;
+        LOG(L_ERROR) << "epoll_create error ,errno : " << errno;
         return false;
     }
     return true;
@@ -54,7 +54,7 @@ void MainReactor::run()
         ev.events = EPOLLIN;
         epoll_ctl(epollfd, EPOLL_CTL_ADD, iter->getSocket(), &ev);
     }
-    LOG(INFO) << "epoll add ok ,size : " << accepts.size();
+    LOG(L_INFO) << "epoll add ok ,size : " << accepts.size();
     
     // start threads
     
@@ -66,17 +66,17 @@ void MainReactor::run()
         int infds = epoll_wait(epollfd, events, MAXEVENTS, EPOLL_TIME_OUT);
         if(infds < 0)
         {
-            LOG(ERROR) << "epoll_wait failed ";
+            LOG(L_ERROR) << "epoll_wait failed ";
             break;
         }
         // 超时
         if (infds == 0)
         {
-            LOG(ERROR) << "epoll_wait() timeout";
+            LOG(L_ERROR) << "epoll_wait() timeout";
             continue;
         }
     
-        LOG(INFO) << "has event ,return size : " <<infds;
+        LOG(L_INFO) << "has event ,return size : " <<infds;
     
         for (int i = 0; i < infds; ++i)
         {
@@ -89,11 +89,11 @@ void MainReactor::run()
                                     &len);
             if (clientsock < 0)
             {
-                LOG(WARN) << "accept failed ,errno : " << errno << " socketfd = " << events[i].data.fd;
+                LOG(L_WARN) << "accept failed ,errno : " << errno << " socketfd = " << events[i].data.fd;
                 continue;
             }
     
-            LOG(INFO) << "new connection ,IP : "
+            LOG(L_INFO) << "new connection ,IP : "
                     << inet_ntoa(client_endPoint.sin_addr)
                     << " ,port : "
                     << ntohs(client_endPoint.sin_port);

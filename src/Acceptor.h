@@ -5,9 +5,8 @@
 #ifndef REACTORSERVER_ACCEPTOR_H
 #define REACTORSERVER_ACCEPTOR_H
 
-#include "HEAD.h"
-#include "DEFINE.h"
-#include "BaseAcceptor.h"
+#include "../include/DEFINE.h"
+#include "../include/BaseAcceptor.h"
 
 namespace wlb
 {

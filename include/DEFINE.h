@@ -5,6 +5,8 @@
 #ifndef REACTORSERVER_DEFINE_H
 #define REACTORSERVER_DEFINE_H
 
+#include "HEAD.h"
+
 #define LISTEN_LIST_COUNT 10
 
 #define MAXEVENTS 1024
@@ -12,5 +14,13 @@
 #define EPOLL_TIME_OUT 5000                 //ms
 
 #define DEFAULT_BUFFER_SIZE  (8 * 1024)     //  8k
+
+namespace wlb
+{
+    using socket_type = uint32_t;
+    using socket_ptr  = socket_type*;
+    
+    using epoll_type = int;
+}
 
 #endif //REACTORSERVER_DEFINE_H

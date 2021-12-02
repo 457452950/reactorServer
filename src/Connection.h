@@ -5,8 +5,7 @@
 #ifndef REACTORSERVER_CONNECTION_H
 #define REACTORSERVER_CONNECTION_H
 
-#include "HEAD.h"
-#include "DEFINE.h"
+#include "../include/DEFINE.h"
 
 
 namespace wlb
@@ -14,9 +13,6 @@ namespace wlb
 
 class Connection
 {
-    using socket_type = int;
-    using socket_ptr  = socket_type*;
-    
 public:
     Connection();
     ~Connection();
