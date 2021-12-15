@@ -26,7 +26,7 @@ add_executable(reactorServer
         include/DEFINE.h
         src/Acceptor.cpp src/Acceptor.h include/BaseAcceptor.h
         src/MainReactor.cpp src/MainReactor.h
-        src/Connection.cpp src/Connection.h include/BaseConnection.h
+        src/RingBufferSession.cpp src/RingBufferSession.h include/BaseConnection.h
         src/SubReactor.cpp src/SubReactor.h 
         src/SubReactorMgr.cpp src/SubReactorMgr.h
         src/ReactorServer.cpp  src/ReactorServer.h include/BaseServer.h

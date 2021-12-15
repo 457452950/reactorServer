@@ -116,7 +116,7 @@ bool SubReactor::add2Epoll(socket_type sock)
 
 bool SubReactor::add2Conncts(ClientData* clientData)
 {
-    BaseSession* conn = new(std::nothrow) Connection();
+    BaseSession* conn = new(std::nothrow) RingBufferSession();
     if (conn == nullptr){
         return false;
     }

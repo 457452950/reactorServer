@@ -16,7 +16,7 @@ namespace wlb
 using namespace rs;
 
 
-class Connection : public BaseSession
+class RingBufferSession : public BaseSession
 {
 public:
     virtual void send(const char* msg, uint msg_size) override;
@@ -32,8 +32,8 @@ public:
     }
     
 public:
-    Connection();
-    virtual ~Connection();
+    RingBufferSession();
+    virtual ~RingBufferSession();
     
     bool setSocket(socket_type sock) override;
     bool Initialize(ClientData* clientData, 

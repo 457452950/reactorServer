@@ -2,13 +2,13 @@
 // Created by wlb on 2021/10/12.
 //
 
-#include "Connection.h"
+#include "RingBufferSession.h"
 
 namespace wlb
 {
     using namespace Log;
 
-Connection::Connection() : m_sSock(-1)
+RingBufferSession::RingBufferSession() : m_sSock(-1)
 {
     this->m_pBuffer = nullptr;
     this->m_iBufferSize = 0;
@@ -20,7 +20,7 @@ Connection::Connection() : m_sSock(-1)
     this->m_strErrorStr = nullptr;
 }
 
-Connection::~Connection()
+RingBufferSession::~RingBufferSession()
 {
     if (this->m_pBuffer != nullptr)
     {
@@ -35,14 +35,14 @@ Connection::~Connection()
     }
 }
 
-bool Connection::setSocket(socket_type sock)
+bool RingBufferSession::setSocket(socket_type sock)
 {
     this->m_sSock = sock;
     if (this->m_sSock <= 0)
         return false;
 }
 
-bool Connection::Initialize(ClientData *clientData, 
+bool RingBufferSession::Initialize(ClientData *clientData, 
                             uint maxBufferSize, 
                             uint32_t maxMessageSize)
 {
@@ -66,7 +66,7 @@ bool Connection::Initialize(ClientData *clientData,
 }
 
 // 初始化存储
-bool Connection::createBuffer()
+bool RingBufferSession::createBuffer()
 {
     this->m_pBuffer = new (std::nothrow) char[m_iBufferSize];
     if (this->m_pBuffer == nullptr)
@@ -80,7 +80,7 @@ bool Connection::createBuffer()
     return true;
 }
 
-bool Connection::recv()
+bool RingBufferSession::recv()
 {
     auto recvSize = ::recv(this->m_sSock,
                 m_pBuffer+m_iRecvOffset,
@@ -97,7 +97,7 @@ bool Connection::recv()
 }
 
 // 更新写指针位置
-void Connection::hasReadAndUpdata(uint size)
+void RingBufferSession::hasReadAndUpdata(uint size)
 {
     this->m_iRecvOffset = (this->m_iRecvOffset + size) % this->m_iBufferSize;
     if (this->m_iRecvOffset == this->m_iReadOffset)
@@ -110,7 +110,7 @@ void Connection::hasReadAndUpdata(uint size)
     }
 }
 
-void Connection::send(const char *msg, uint msg_size)
+void RingBufferSession::send(const char *msg, uint msg_size)
 {
     if (msg_size == 0)
     {
@@ -127,7 +127,7 @@ void Connection::send(const char *msg, uint msg_size)
     LOG(L_INFO) << "send size : " << sendLen << " str : " << msg;
 }
 
-void Connection::send(const std::string &msg)
+void RingBufferSession::send(const std::string &msg)
 {
     if (msg.empty())
     {
@@ -138,7 +138,7 @@ void Connection::send(const std::string &msg)
     this->send(msg.c_str(), msg.size());
 }
 
-int Connection::readNextMessage(std::string &msg)
+int RingBufferSession::readNextMessage(std::string &msg)
 {
     uint16_t size;
     msg.clear();
@@ -202,7 +202,7 @@ int Connection::readNextMessage(std::string &msg)
     return size ? size : 1; // size为0时返回1
 }
 
-void Connection::getMsgSize(uint16_t &size)
+void RingBufferSession::getMsgSize(uint16_t &size)
 {
 
     int pWrite = this->m_iRecvOffset;
@@ -237,7 +237,7 @@ void Connection::getMsgSize(uint16_t &size)
     }
 }
 
-uint Connection::getRecvSize()
+uint RingBufferSession::getRecvSize()
 {
     if (m_bIsFull == true) // 存储已满
     {
