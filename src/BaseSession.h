@@ -2,6 +2,7 @@
 #define BASE_BUFFER__
 
 #include "../include/DEFINE.h"
+#include "BaseConnection.h"
 
 namespace wlb
 {

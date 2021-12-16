@@ -31,6 +31,7 @@ add_executable(reactorServer
         src/SubReactorMgr.cpp src/SubReactorMgr.h
         src/ReactorServer.cpp  src/ReactorServer.h include/BaseServer.h
         src/BaseSession.h
+        src/FixedBufferSession.cpp src/FixedBufferSession.h
 )
 
 link_directories($(Boost_library_dir))
