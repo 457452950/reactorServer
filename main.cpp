@@ -1,15 +1,17 @@
 #include <iostream>
 #include <atomic>
-#include "HEAD.h"
-#include "DEFINE.h"
-#include "BaseAcceptor.h"
-#include "BaseServer.h"
-#include "src/MainReactor.h"
+#include <signal.h>
+#include "reactorServer.h"
 
 using namespace wlb;
 using namespace Log;
 
 std::atomic_int64_t _count{0};
+
+void handle_pipe(int sig)
+{
+    LOG(L_ERROR) << "error sigpipe!";
+}
 
 class test : public BaseServer
 {
@@ -37,6 +39,9 @@ public:
 
 int main()
 {
+    // signal(SIGPIPE, SIG_IGN);   // 忽略sigpipe信号
+    signal(SIGPIPE, handle_pipe);   // 自定义处理函数
+
     Logger::Init(Log::LOG_LEVEL::L_DEBUG, "rs");
     
     auto* a = CreateAccepter(4001);
