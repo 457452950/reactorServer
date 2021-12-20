@@ -57,6 +57,8 @@ void Acceptor::setOpt()
     ::setsockopt(this->m_sSock, SOL_SOCKET, SO_REUSEADDR, &opt, len);
     ::setsockopt(this->m_sSock, SOL_SOCKET, SO_REUSEADDR, &opt, len);
     ::setsockopt(this->m_sSock, SOL_SOCKET, SO_KEEPALIVE, &opt, len);
+
+    ::fcntl(this->m_sSock, F_SETFL, ::fcntl(this->m_sSock, F_GETFL, 0) | O_NONBLOCK); // set no block
 }
 
 int Acceptor::bind(int port)
