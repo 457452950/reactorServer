@@ -33,6 +33,13 @@ public:
         connect->send(msg);
     };
 
+    virtual int SetListenEpollTimeOut() {    // ms
+        return -1;               // 5sec
+    }
+    virtual int SetWorkEpollTimeOut() {      // ms
+        return 1000 * 60 * 5;   // 5sec
+    }
+
     test() {}
     virtual ~test() {};
 };

@@ -79,7 +79,7 @@ void SubReactor::Run()
         
         if (infds == 0)     // 超时
         {
-            // LOG(L_INFO) << "epoll_wait() timeout.";
+            LOG(L_INFO) << "epoll_wait() timeout.";
             continue;
         }
     

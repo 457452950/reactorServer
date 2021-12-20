@@ -124,6 +124,7 @@ void MainReactor::runLoop()
         }
         if (infds == 0)     // 超时
         {
+            LOG(L_INFO) << "weorker time out";
             continue;
         }
         

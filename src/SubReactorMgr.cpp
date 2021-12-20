@@ -88,6 +88,12 @@ void SubReactorMgr::waitToExit()
 bool SubReactorMgr::insertSocket(ClientData* clientData)
 {
     ::fcntl(clientData->sock, F_SETFL, ::fcntl(clientData->sock, F_GETFL, 0) | O_NONBLOCK);
+    int optval = 1;
+    if (::setsockopt(clientData->sock, IPPROTO_TCP, TCP_NODELAY,
+                &optval, static_cast<socklen_t>(sizeof optval)) < 0)
+    {
+        LOG(L_ERROR) << "Socket::setTcpNoDelay";
+    } 
     int index = 0;
     LOG(L_INFO) << "put into no." << index;
     if ( !m_vWorker[index]->pushSocket(clientData) )

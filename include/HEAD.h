@@ -21,6 +21,7 @@
 #include <sys/epoll.h>
 #include <unistd.h>
 #include <netinet/in.h>
+#include <netinet/tcp.h>    // tcp_nodelay
 #include <arpa/inet.h>
 #include <cerrno>
 #include <fcntl.h>
