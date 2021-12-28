@@ -8,6 +8,7 @@
 #include "HEAD.h"
 #include "DEFINE.h"
 #include "RingBufferSession.h"
+#include "FixedBufferSession.h"
 #include "ReactorServer.h"
 
 namespace wlb
