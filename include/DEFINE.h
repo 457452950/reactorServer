@@ -21,7 +21,7 @@ using socket_ptr  = socket_type*;
 
 using endpoint = sockaddr_in;
 
-struct ClientData
+struct ClientDate
 {
     socket_type sock;
     struct _ipv4

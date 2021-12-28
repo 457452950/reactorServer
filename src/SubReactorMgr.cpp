@@ -85,7 +85,7 @@ void SubReactorMgr::waitToExit()
 }
 
 // 需要做负载均衡
-bool SubReactorMgr::insertSocket(ClientData* clientData)
+bool SubReactorMgr::insertSocket(ClientDate* clientData)
 {
     ::fcntl(clientData->sock, F_SETFL, ::fcntl(clientData->sock, F_GETFL, 0) | O_NONBLOCK);
     int optval = 1;

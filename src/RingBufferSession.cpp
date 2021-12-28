@@ -42,13 +42,13 @@ bool RingBufferSession::setSocket(socket_type sock)
         return false;
 }
 
-bool RingBufferSession::Initialize(ClientData *clientData, 
+bool RingBufferSession::Initialize(ClientDate *clientData, 
                             uint maxBufferSize, 
                             uint32_t maxMessageSize)
 {
     this->m_sSock = clientData->sock;
-    this->m_sClientData.ipv4.IP = clientData->ipv4.IP;
-    this->m_sClientData.ipv4.port = clientData->ipv4.port;
+    this->m_sClientDate.ipv4.IP = clientData->ipv4.IP;
+    this->m_sClientDate.ipv4.port = clientData->ipv4.port;
 
     this->setBufferSize(maxBufferSize);
 

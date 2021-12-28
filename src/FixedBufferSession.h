@@ -26,7 +26,7 @@ public:
     int  getPeerPort() override;
 
 //  Based BaseSession
-    bool Initialize(ClientData* clientData, 
+    bool Initialize(ClientDate* clientDate, 
                     uint32_t maxBufferSize, 
                     uint32_t maxMessageSize) override;
     bool setSocket(socket_type sock) override;
@@ -42,6 +42,8 @@ private:
     // session config
     uint32_t m_uBufferSize;
     uint32_t m_uMaxMessageSize;
+
+    ClientDate m_ClientDate;
 
     socket_type m_Socket{0};
     char* m_pBuffer{nullptr};

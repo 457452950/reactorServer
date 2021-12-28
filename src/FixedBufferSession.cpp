@@ -1,5 +1,4 @@
 #include "FixedBufferSession.h"
-#include "Logger.h"
 
 
 namespace wlb
@@ -21,21 +20,34 @@ using namespace Log;
     }
 
     // Based BaseConnection
-    void FixedBufferSession::send(const char *msg, uint msg_size) {}
+    void FixedBufferSession::send(const char *msg, uint msg_size) 
+    {
+        ::send(m_Socket, msg, msg_size, 0);
+    }
     void FixedBufferSession::send(const std::string &msg) 
     {
         this->send(msg.c_str(), msg.size());
     }
 
     char *FixedBufferSession::getErrorStr() {}
-    char *FixedBufferSession::getPeerIp() {}
-    int FixedBufferSession::getPeerPort() {}
+    char *FixedBufferSession::getPeerIp() 
+    {
+        return m_ClientDate.ipv4.IP;
+    }
+    int FixedBufferSession::getPeerPort() 
+    {
+        return m_ClientDate.ipv4.port;
+    }
 
     //  Based BaseSession
-    bool FixedBufferSession::Initialize(ClientData *clientData,
+    bool FixedBufferSession::Initialize(ClientDate *clientData,
                                         uint32_t maxBufferSize,
                                         uint32_t maxMessageSize) 
     {
+        m_ClientDate = *clientData;
+
+        if ( !this->setSocket(clientData->sock) )
+            return false;
         m_uBufferSize = maxBufferSize;
         m_uMaxMessageSize = maxMessageSize;
 
@@ -65,8 +77,9 @@ using namespace Log;
         if (recv_len != 0 || this->getMaxRecvSize() == 0)
         {
             m_uWriteOffset = (m_uWriteOffset + recv_len) % m_uBufferSize;
+            return true;
         }
-        
+        return false;
     }
 
     int32_t FixedBufferSession::readNextMessage(std::string &message) 
@@ -82,7 +95,7 @@ using namespace Log;
             else
                 return 0;
         }
-        else // m_uWriteOffset <= m_uReadOffset
+        else if ((m_uWriteOffset < m_uReadOffset) || m_bBuffIsFull) // m_uWriteOffset <= m_uReadOffset
         {
             uint32_t back = m_uBufferSize - m_uReadOffset;
             uint32_t front = m_uWriteOffset;
@@ -94,8 +107,13 @@ using namespace Log;
             else
                 return 0;
         }
+        else
+        {
+            return 0;
+        }
 
         m_uReadOffset = (m_uReadOffset + m_uMaxMessageSize) % m_uBufferSize;
+        LOG(L_DEBUG) << "readoffset : " << m_uReadOffset << " writeoffset : " << m_uWriteOffset;
         return m_uMaxMessageSize;
     }
 

@@ -14,7 +14,7 @@ class BaseSession : public BaseConnection
 public:
     virtual ~BaseSession() { };
 
-    virtual bool Initialize(ClientData* clientData, uint32_t maxBufferSize, uint32_t maxMessageSize) = 0;
+    virtual bool Initialize(ClientDate* clientDate, uint32_t maxBufferSize, uint32_t maxMessageSize) = 0;
     virtual bool setSocket(socket_type sock) = 0;
 
     // 接收消息

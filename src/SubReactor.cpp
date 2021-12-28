@@ -48,7 +48,7 @@ bool SubReactor::Initialize(ReactorServer* server)
     return true;
 }
 
-bool SubReactor::pushSocket(ClientData* clientData)
+bool SubReactor::pushSocket(ClientDate* clientData)
 {
     if ( !this->add2Conncts(clientData) ){
         LOG(L_ERROR) << "cant add to conncts ";
@@ -114,14 +114,19 @@ bool SubReactor::add2Epoll(socket_type sock)
     return !::epoll_ctl(epollfd, EPOLL_CTL_ADD, sock, &ev);
 }
 
-bool SubReactor::add2Conncts(ClientData* clientData)
+bool SubReactor::add2Conncts(ClientDate* clientData)
 {
-    BaseSession* conn = new(std::nothrow) RingBufferSession();
+    // BaseSession* conn = new(std::nothrow) RingBufferSession();
+    BaseSession* conn = new(std::nothrow) FixedBufferSession();
     if (conn == nullptr){
         return false;
     }
     
-    if ( !conn->Initialize(clientData, this->m_pServer->getMaxBufferSize(), this->m_pServer->getMaxBufferSize()))
+    // if ( !conn->Initialize(clientData, this->m_pServer->getMaxBufferSize(), this->m_pServer->getMaxBufferSize()))
+    // {
+    //     return false;
+    // }
+    if ( !conn->Initialize(clientData, 21, 10))
     {
         return false;
     }

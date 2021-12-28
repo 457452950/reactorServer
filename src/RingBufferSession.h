@@ -25,10 +25,10 @@ public:
         return m_strErrorStr;
     };
     virtual char* getPeerIp() override{
-        return m_sClientData.ipv4.IP;
+        return m_sClientDate.ipv4.IP;
     };
     virtual int getPeerPort() override{
-        return m_sClientData.ipv4.port;
+        return m_sClientDate.ipv4.port;
     }
     
 public:
@@ -36,7 +36,7 @@ public:
     virtual ~RingBufferSession();
     
     bool setSocket(socket_type sock) override;
-    bool Initialize(ClientData* clientData, 
+    bool Initialize(ClientDate* clientData, 
                     uint32_t maxBufferSize = 512*1024U, 
                     uint32_t maxMessageSize = 512*1024U)override;
 
@@ -68,7 +68,7 @@ private:
     uint                    m_iRecvOffset;      // 写指针、生产者指针
 
     // 对端信息
-    union _ClientData{
+    union _ClientDate{
         struct _ipv4{
             char* IP;
             uint  port;
@@ -78,7 +78,7 @@ private:
             uint  port;
         }   ipv6;
         
-    }                       m_sClientData;
+    }                       m_sClientDate;
     
     bool                    m_bRunning;     // 暂未启用
     bool                    m_bIsFull;      // 状态值：缓冲区满

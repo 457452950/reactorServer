@@ -25,7 +25,7 @@ public:
     void stop();
     void waitToExit();
     
-    bool insertSocket(ClientData* clientData);
+    bool insertSocket(ClientDate* clientData);
 
 private:
     std::vector<SubReactor*>    m_vWorker;

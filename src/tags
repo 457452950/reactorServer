@@ -6,16 +6,16 @@
 !_TAG_PROGRAM_VERSION	5.9~svn20110310	//
 Acceptor	Acceptor.cpp	/^Acceptor::Acceptor()$/;"	f	class:wlb::Acceptor
 Acceptor	Acceptor.h	/^class Acceptor : public BaseAcceptor$/;"	c	namespace:wlb
-ClientData	Connection.h	/^struct ClientData$/;"	s	namespace:wlb
+ClientDate	Connection.h	/^struct ClientDate$/;"	s	namespace:wlb
 Connection	Connection.cpp	/^Connection::Connection() : m_sSock(-1)$/;"	f	class:wlb::Connection
 Connection	Connection.h	/^class Connection : public BaseConnection$/;"	c	namespace:wlb
 CreateAccepter	Acceptor.cpp	/^BaseAcceptor* CreateAccepter(int port)  \/\/ 对外接口$/;"	f	namespace:wlb
-IP	Connection.h	/^            char* IP;$/;"	m	struct:wlb::Connection::_ClientData::_ipv4
-IP	Connection.h	/^            char* IP;$/;"	m	struct:wlb::Connection::_ClientData::_ipv6
-IP	Connection.h	/^        char* IP;$/;"	m	struct:wlb::ClientData::_ipv4
-IP	Connection.h	/^        char* IP;$/;"	m	struct:wlb::ClientData::_ipv6
+IP	Connection.h	/^            char* IP;$/;"	m	struct:wlb::Connection::_ClientDate::_ipv4
+IP	Connection.h	/^            char* IP;$/;"	m	struct:wlb::Connection::_ClientDate::_ipv6
+IP	Connection.h	/^        char* IP;$/;"	m	struct:wlb::ClientDate::_ipv4
+IP	Connection.h	/^        char* IP;$/;"	m	struct:wlb::ClientDate::_ipv6
 Initialize	Acceptor.cpp	/^bool Acceptor::Initialize(int port)$/;"	f	class:wlb::Acceptor
-Initialize	Connection.cpp	/^bool Connection::Initialize(ClientData *clientData, uint maxBufferSize)$/;"	f	class:wlb::Connection
+Initialize	Connection.cpp	/^bool Connection::Initialize(ClientDate *clientData, uint maxBufferSize)$/;"	f	class:wlb::Connection
 Initialize	MainReactor.cpp	/^bool MainReactor::Initialize(BaseServer* server, unsigned int threadCount)$/;"	f	class:wlb::MainReactor
 Initialize	ReactorServer.h	/^    bool Initialize(BaseServer* server){$/;"	f	class:wlb::ReactorServer
 Initialize	SubReactor.cpp	/^bool SubReactor::Initialize(ReactorServer* server)$/;"	f	class:wlb::SubReactor
@@ -37,15 +37,15 @@ SubReactor	SubReactor.cpp	/^SubReactor::SubReactor()$/;"	f	class:wlb::SubReactor
 SubReactor	SubReactor.h	/^class SubReactor$/;"	c	namespace:wlb
 SubReactorMgr	SubReactorMgr.cpp	/^SubReactorMgr::SubReactorMgr()$/;"	f	class:wlb::SubReactorMgr
 SubReactorMgr	SubReactorMgr.h	/^class SubReactorMgr$/;"	c	namespace:wlb
-_ClientData	Connection.h	/^    union _ClientData{$/;"	u	class:wlb::Connection
+_ClientDate	Connection.h	/^    union _ClientDate{$/;"	u	class:wlb::Connection
 __SERVER_H	ReactorServer.h	2;"	d
-_ipv4	Connection.h	/^        struct _ipv4{$/;"	s	union:wlb::Connection::_ClientData
-_ipv4	Connection.h	/^    struct _ipv4$/;"	s	struct:wlb::ClientData
-_ipv6	Connection.h	/^        struct _ipv6{$/;"	s	union:wlb::Connection::_ClientData
-_ipv6	Connection.h	/^    struct _ipv6                \/\/ 保留空间 可做联合体$/;"	s	struct:wlb::ClientData
+_ipv4	Connection.h	/^        struct _ipv4{$/;"	s	union:wlb::Connection::_ClientDate
+_ipv4	Connection.h	/^    struct _ipv4$/;"	s	struct:wlb::ClientDate
+_ipv6	Connection.h	/^        struct _ipv6{$/;"	s	union:wlb::Connection::_ClientDate
+_ipv6	Connection.h	/^    struct _ipv6                \/\/ 保留空间 可做联合体$/;"	s	struct:wlb::ClientDate
 _server	ReactorServer.h	/^    BaseServer* _server;$/;"	m	class:wlb::ReactorServer
 accepts	MainReactor.h	/^    acceptVec                   accepts;            \/\/ 不负责析构$/;"	m	class:wlb::MainReactor
-add2Conncts	SubReactor.cpp	/^bool SubReactor::add2Conncts(ClientData* clientData)$/;"	f	class:wlb::SubReactor
+add2Conncts	SubReactor.cpp	/^bool SubReactor::add2Conncts(ClientDate* clientData)$/;"	f	class:wlb::SubReactor
 add2Epoll	SubReactor.cpp	/^bool SubReactor::add2Epoll(socket_type sock)$/;"	f	class:wlb::SubReactor
 bind	Acceptor.cpp	/^int Acceptor::bind(int port)$/;"	f	class:wlb::Acceptor
 createBuffer	Connection.cpp	/^bool Connection::createBuffer()$/;"	f	class:wlb::Connection
@@ -62,11 +62,11 @@ getSocket	Acceptor.h	/^    inline socket_type getSocket()$/;"	f	class:wlb::Accep
 getSocket	Connection.h	/^    inline socket_type getSocket(){$/;"	f	class:wlb::Connection
 getWorkEpollTimeOut	ReactorServer.h	/^    inline int getWorkEpollTimeOut() {$/;"	f	class:wlb::ReactorServer
 hasReadAndUpdata	Connection.cpp	/^void Connection::hasReadAndUpdata(uint size)$/;"	f	class:wlb::Connection
-insertSocket	SubReactorMgr.cpp	/^bool SubReactorMgr::insertSocket(ClientData* clientData)$/;"	f	class:wlb::SubReactorMgr
-ipv4	Connection.h	/^        }   ipv4;$/;"	m	union:wlb::Connection::_ClientData	typeref:struct:wlb::Connection::_ClientData::_ipv4
-ipv4	Connection.h	/^    }ipv4;$/;"	m	struct:wlb::ClientData	typeref:struct:wlb::ClientData::_ipv4
-ipv6	Connection.h	/^        }   ipv6;$/;"	m	union:wlb::Connection::_ClientData	typeref:struct:wlb::Connection::_ClientData::_ipv6
-ipv6	Connection.h	/^    }ipv6;$/;"	m	struct:wlb::ClientData	typeref:struct:wlb::ClientData::_ipv6
+insertSocket	SubReactorMgr.cpp	/^bool SubReactorMgr::insertSocket(ClientDate* clientData)$/;"	f	class:wlb::SubReactorMgr
+ipv4	Connection.h	/^        }   ipv4;$/;"	m	union:wlb::Connection::_ClientDate	typeref:struct:wlb::Connection::_ClientDate::_ipv4
+ipv4	Connection.h	/^    }ipv4;$/;"	m	struct:wlb::ClientDate	typeref:struct:wlb::ClientDate::_ipv4
+ipv6	Connection.h	/^        }   ipv6;$/;"	m	union:wlb::Connection::_ClientDate	typeref:struct:wlb::Connection::_ClientDate::_ipv6
+ipv6	Connection.h	/^    }ipv6;$/;"	m	struct:wlb::ClientDate	typeref:struct:wlb::ClientDate::_ipv6
 m_ReactorMgr	MainReactor.h	/^    SubReactorMgr               m_ReactorMgr;$/;"	m	class:wlb::MainReactor
 m_bIsFull	Connection.h	/^    bool                    m_bIsFull;      \/\/ 状态值：缓冲区满$/;"	m	class:wlb::Connection
 m_bRunning	Connection.h	/^    bool                    m_bRunning;     \/\/ 暂未启用$/;"	m	class:wlb::Connection
@@ -89,7 +89,7 @@ m_pMainThread	MainReactor.h	/^    std::thread*                m_pMainThread;    
 m_pServer	MainReactor.h	/^    ReactorServer*              m_pServer;          $/;"	m	class:wlb::MainReactor
 m_pServer	SubReactor.h	/^    ReactorServer*      m_pServer;              \/\/ 不负责析构$/;"	m	class:wlb::SubReactor
 m_pServer	SubReactorMgr.h	/^    ReactorServer*              m_pServer;$/;"	m	class:wlb::SubReactorMgr
-m_sClientData	Connection.h	/^    }                       m_sClientData;$/;"	m	class:wlb::Connection	typeref:union:wlb::Connection::_ClientData
+m_sClientDate	Connection.h	/^    }                       m_sClientDate;$/;"	m	class:wlb::Connection	typeref:union:wlb::Connection::_ClientDate
 m_sSock	Acceptor.h	/^    socket_type m_sSock;        \/\/ 监听套接字$/;"	m	class:wlb::Acceptor
 m_sSock	Connection.h	/^    socket_type             m_sSock;$/;"	m	class:wlb::Connection
 m_strErrorStr	Connection.h	/^    char*                   m_strErrorStr;  \/\/ 错误信息$/;"	m	class:wlb::Connection
@@ -100,12 +100,12 @@ onDisConnected	ReactorServer.h	/^    void onDisConnected(Connection* conn){$/;"	
 onMessage	ReactorServer.h	/^    bool onMessage(Connection* conn){$/;"	f	class:wlb::ReactorServer
 override	Connection.h	/^    virtual void send(const char* msg) override;$/;"	m	class:wlb::Connection
 override	Connection.h	/^    virtual void send(const std::string& msg) override;$/;"	m	class:wlb::Connection
-port	Connection.h	/^            uint  port;$/;"	m	struct:wlb::Connection::_ClientData::_ipv4
-port	Connection.h	/^            uint  port;$/;"	m	struct:wlb::Connection::_ClientData::_ipv6
-port	Connection.h	/^        uint port;$/;"	m	struct:wlb::ClientData::_ipv4
-port	Connection.h	/^        uint port;$/;"	m	struct:wlb::ClientData::_ipv6
+port	Connection.h	/^            uint  port;$/;"	m	struct:wlb::Connection::_ClientDate::_ipv4
+port	Connection.h	/^            uint  port;$/;"	m	struct:wlb::Connection::_ClientDate::_ipv6
+port	Connection.h	/^        uint port;$/;"	m	struct:wlb::ClientDate::_ipv4
+port	Connection.h	/^        uint port;$/;"	m	struct:wlb::ClientDate::_ipv6
 pushAcceptor	MainReactor.cpp	/^void MainReactor::pushAcceptor(accept_ptr acceptor)$/;"	f	class:wlb::MainReactor
-pushSocket	SubReactor.cpp	/^bool SubReactor::pushSocket(ClientData* clientData)$/;"	f	class:wlb::SubReactor
+pushSocket	SubReactor.cpp	/^bool SubReactor::pushSocket(ClientDate* clientData)$/;"	f	class:wlb::SubReactor
 readNextMessage	Connection.cpp	/^int Connection::readNextMessage(std::string &msg)$/;"	f	class:wlb::Connection
 run	MainReactor.cpp	/^void MainReactor::run()$/;"	f	class:wlb::MainReactor
 run	SubReactorMgr.cpp	/^void SubReactorMgr::run()$/;"	f	class:wlb::SubReactorMgr

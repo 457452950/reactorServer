@@ -143,7 +143,7 @@ void MainReactor::runLoop()
                 continue;
             }
 
-            struct ClientData* clientData = new ClientData;
+            struct ClientDate* clientData = new ClientDate;
             clientData->sock = clientsock;
             clientData->ipv4.IP = ::inet_ntoa(client_endPoint.sin_addr);
             clientData->ipv4.port = ::ntohs(client_endPoint.sin_port);

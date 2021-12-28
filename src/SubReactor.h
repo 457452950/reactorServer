@@ -31,10 +31,10 @@ public:
     void Run();
     void Stop();
 
-    bool pushSocket(ClientData* clientData);        // 插入连接
+    bool pushSocket(ClientDate* clientData);        // 插入连接
 
 private:
-    bool add2Conncts(ClientData* clientData);
+    bool add2Conncts(ClientDate* clientData);
     bool add2Epoll(socket_type sock);
 
     bool ReadDataFromEvents(epoll_event& event);
