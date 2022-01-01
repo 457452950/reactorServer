@@ -46,10 +46,10 @@ public:
 
 int main()
 {
+    Logger::Init(Log::LOG_LEVEL::L_DEBUG, "rs");
+
     // signal(SIGPIPE, SIG_IGN);   // 忽略sigpipe信号
     signal(SIGPIPE, handle_pipe);   // 自定义处理函数
-
-    Logger::Init(Log::LOG_LEVEL::L_DEBUG, "rs");
     
     auto* a = CreateAccepter(4001);
     if (a == nullptr)

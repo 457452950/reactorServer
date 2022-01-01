@@ -26,7 +26,7 @@
 #include <cerrno>
 #include <fcntl.h>
 
-#include "utils/include/Logger.h"
+#include "utils/include/AsyncLogger.h"
 
 
 #endif //REACTORSERVER_HEAD_H

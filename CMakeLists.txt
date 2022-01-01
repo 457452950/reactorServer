@@ -38,6 +38,6 @@ link_directories($(Boost_library_dir))
 link_directories( ./utils/lib)
 
 target_link_libraries(reactorServer ${Boost_LIBRARIES})
-target_link_libraries(reactorServer logger jsonreader)
+target_link_libraries(reactorServer asynclogger jsonreader)
 
 
