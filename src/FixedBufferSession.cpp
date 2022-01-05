@@ -73,10 +73,15 @@ using namespace Log;
 
     bool FixedBufferSession::recv() 
     {
-        auto recv_len = ::recv(m_Socket, m_pBuffer, this->getMaxRecvSize(), 0);
+        auto recv_len = ::recv(m_Socket, m_pBuffer + m_uWriteOffset, this->getMaxRecvSize(), 0);
+        LOG(L_DEBUG) << "recv len: " << recv_len;
         if (recv_len != 0 || this->getMaxRecvSize() == 0)
         {
             m_uWriteOffset = (m_uWriteOffset + recv_len) % m_uBufferSize;
+            if (m_uWriteOffset == m_uReadOffset)
+            {
+                m_bBuffIsFull = true;
+            }
             return true;
         }
         return false;
@@ -90,7 +95,7 @@ using namespace Log;
         {
             if ((m_uWriteOffset - m_uReadOffset) >= m_uMaxMessageSize)
             {
-                message.append(m_pBuffer + m_uReadOffset, m_pBuffer + m_uMaxMessageSize);
+                message.append(m_pBuffer + m_uReadOffset, m_uMaxMessageSize);
             }
             else
                 return 0;
@@ -114,6 +119,7 @@ using namespace Log;
 
         m_uReadOffset = (m_uReadOffset + m_uMaxMessageSize) % m_uBufferSize;
         LOG(L_DEBUG) << "readoffset : " << m_uReadOffset << " writeoffset : " << m_uWriteOffset;
+        m_bBuffIsFull = false;
         return m_uMaxMessageSize;
     }
 

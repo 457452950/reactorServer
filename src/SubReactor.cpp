@@ -126,7 +126,7 @@ bool SubReactor::add2Conncts(ClientDate* clientData)
     // {
     //     return false;
     // }
-    if ( !conn->Initialize(clientData, 21, 10))
+    if ( !conn->Initialize(clientData, 200, 106))
     {
         return false;
     }
