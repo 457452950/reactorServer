@@ -2,7 +2,7 @@
 #define __SERVER_H
 
 #include "BaseServer.h"
-#include "RingBufferSession.h"
+#include "BaseSession.h"
 
 
 namespace wlb

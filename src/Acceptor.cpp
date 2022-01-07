@@ -55,7 +55,7 @@ void Acceptor::setOpt()
     int opt = 1;
     unsigned int len = sizeof(opt);
     ::setsockopt(this->m_sSock, SOL_SOCKET, SO_REUSEADDR, &opt, len);
-    ::setsockopt(this->m_sSock, SOL_SOCKET, SO_REUSEADDR, &opt, len);
+    ::setsockopt(this->m_sSock, SOL_SOCKET, SO_REUSEPORT, &opt, len);
     ::setsockopt(this->m_sSock, SOL_SOCKET, SO_KEEPALIVE, &opt, len);
 
     ::fcntl(this->m_sSock, F_SETFL, ::fcntl(this->m_sSock, F_GETFL, 0) | O_NONBLOCK); // set no block

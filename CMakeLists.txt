@@ -8,6 +8,7 @@ if(NOT Boost_FOUND)
     message("NOT found Boost")
 endif()
 
+message($(Boost_include_dir))
 
 include_directories($(Boost_include_dir))
 include_directories(
